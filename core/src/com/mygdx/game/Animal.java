@@ -110,8 +110,8 @@ public class Animal {
 
     private void setRandomLocation() {
         do {
-            animalX = ThreadLocalRandom.current().nextInt(RECT_SIZE, Gdx.graphics.getWidth() - RECT_SIZE + 1);
-            animalY = ThreadLocalRandom.current().nextInt(RECT_SIZE, Gdx.graphics.getHeight() - RECT_SIZE + 1);
+            animalX = ThreadLocalRandom.current().nextInt(RECT_SIZE, Gdx.graphics.getWidth() - 2*RECT_SIZE + 1);
+            animalY = ThreadLocalRandom.current().nextInt(RECT_SIZE, Gdx.graphics.getHeight() - 2*RECT_SIZE + 1);
         } while (grid[animalY / RECT_SIZE][animalX / RECT_SIZE] != '.');
     }
 

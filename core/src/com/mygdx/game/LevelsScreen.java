@@ -86,6 +86,7 @@ public class LevelsScreen extends ScreenAdapter {
                         && screenX <= map.getWidth() / 2 + 50 + thirdLevel.getWidth()
                         && screenY >= 2 * map.getHeight() / 5 + map.getHeight() / 10 + 100
                         && screenY <= 2 * map.getHeight() / 5 + map.getHeight() / 10 + 100 + thirdLevel.getHeight()
+
                         && level.getNum() + 1 >= 3)
                     game.setScreen(new GameScreen(game, levelFirstAnimals, 15, 30, 45, 75));
                 else if (screenX >= map.getWidth() / 2 + 20

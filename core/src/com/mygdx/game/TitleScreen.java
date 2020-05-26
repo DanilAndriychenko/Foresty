@@ -72,12 +72,12 @@ public class TitleScreen extends ScreenAdapter {
             }
         }
 
-        rabbitAnimation = new Animation<TextureRegion>(0.025f, walkFrames);
+        rabbitAnimation = new Animation<>(0.04f, walkFrames);
         stateTime = 0f;
 
         batch = new SpriteBatch();
-        startTexture = new Texture(Gdx.files.internal("startLabel.png"));
-        backgroundTexture = new Texture(Gdx.files.internal("7d9f2f272f86590a1099e045b9a1c360.png"));
+        startTexture = new Texture(Gdx.files.internal("start.png"));
+        backgroundTexture = new Texture(Gdx.files.internal("titleScreenBackground.jpg"));
         rabbit = new Texture(Gdx.files.internal("rabbit.gif"));
     }
 
@@ -105,7 +105,7 @@ public class TitleScreen extends ScreenAdapter {
         if (numOfRenders == 30)
             rabbitIsDrawn = true;
         if (rabbitIsDrawn) {
-            batch.draw(reg, rabbitX, rabbitY, Gdx.graphics.getWidth()/15, Gdx.graphics.getHeight()/15);
+            batch.draw(reg, rabbitX, rabbitY, Gdx.graphics.getWidth()/25, Gdx.graphics.getHeight()/25);
             rabbitX += rabbitSpeed;
         }
         batch.end();

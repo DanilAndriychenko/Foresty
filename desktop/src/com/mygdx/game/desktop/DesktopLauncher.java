@@ -10,7 +10,7 @@ import java.util.HashSet;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.height = 592;
+		config.height = 672;
 		config.width = 896;
 		new LwjglApplication(new Foresty(), config);
 	}
