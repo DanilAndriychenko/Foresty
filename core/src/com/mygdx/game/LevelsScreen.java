@@ -64,8 +64,11 @@ public class LevelsScreen extends ScreenAdapter {
         batch = new SpriteBatch();
 
         final HashMap<Animal.TYPES, Integer> levelFirstAnimals = new HashMap<>();
-        levelFirstAnimals.put(Animal.TYPES.TYPE_ONE, 1);
-        levelFirstAnimals.put(Animal.TYPES.TYPE_TWO, 2);
+        levelFirstAnimals.put(Animal.TYPES.RABBIT, 1);
+        levelFirstAnimals.put(Animal.TYPES.HORSE, 1);
+        levelFirstAnimals.put(Animal.TYPES.SHEEP, 1);
+        levelFirstAnimals.put(Animal.TYPES.GOAT, 1);
+        levelFirstAnimals.put(Animal.TYPES.GOAT_BABY, 1);
 
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override

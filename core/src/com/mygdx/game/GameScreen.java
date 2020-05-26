@@ -22,7 +22,7 @@ public class GameScreen extends ScreenAdapter {
 
     private final Foresty game;
     private HashMap<Animal.TYPES, Integer> typesIntegerHashMap;
-    ArrayList<Animal> animals;
+    public ArrayList<Animal> animals;
     private static final int RECT_SIZE = 16;
     private static final int VELOCITY = 4;
     private static final double PINK_FLOWER_TEXTURE_PROBABILITY = 0.02;
@@ -106,7 +106,7 @@ public class GameScreen extends ScreenAdapter {
         animals = new ArrayList<>();
         for (Map.Entry<Animal.TYPES, Integer> entry: typesIntegerHashMap.entrySet()){
             for (int i=0; i<entry.getValue(); i++){
-                animals.add(new Animal(entry.getKey().getTexture(), RECT_SIZE, entry.getKey().getAnimalXVel(), entry.getKey().getAnimalYVel(), grid, spriteBatch, borderPoints, tracePoints));
+                animals.add(new Animal(entry.getKey().getStringAnimationHashMap(), entry.getKey().getAnimalXVel(), entry.getKey().getAnimalYVel(), grid, spriteBatch, borderPoints, tracePoints));
             }
         }
     }
