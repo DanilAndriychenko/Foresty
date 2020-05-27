@@ -1,6 +1,9 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.*;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -11,27 +14,17 @@ import java.util.*;
 
 public class GameScreen extends ScreenAdapter {
 
-    public GameScreen(Foresty game, HashMap<Animal.TYPES, Integer> typesIntegerHashMap, int secForOneStar, int secForTwoStars, int secForThreeStars, int percOfFillForWin){
-        this.game = game;
-        this.typesIntegerHashMap = typesIntegerHashMap;
-        this.secForOneStar = secForOneStar;
-        this.secForTwoStars = secForTwoStars;
-        this.secForThreeStars = secForThreeStars;
-        this.percOfFillForWin = percOfFillForWin;
-    }
-
-    private final Foresty game;
-    private HashMap<Animal.TYPES, Integer> typesIntegerHashMap;
-    public ArrayList<Animal> animals;
     private static final int RECT_SIZE = 16;
     private static final int VELOCITY = 4;
     private static final double PINK_FLOWER_TEXTURE_PROBABILITY = 0.02;
     private static final double BLUE_FLOWER_TEXTURE_PROBABILITY = 0.02;
     private static final double ROCKS_TEXTURE_PROBABILITY = 0.02;
+    private final Foresty game;
     private final int secForOneStar;
     private final int secForTwoStars;
     private final int secForThreeStars;
     private final int percOfFillForWin;
+    public ArrayList<Animal> animals;
     char[][] grid;
     int rows, columns;
     int lastPressedKey;
@@ -46,13 +39,23 @@ public class GameScreen extends ScreenAdapter {
     HashMap<Point, Texture> contentPoints;
     Random random;
     boolean turnedBefore;
+    Animal animal;
+    private HashMap<Animal.TYPES, Integer> typesIntegerHashMap;
+    private Texture winScreenTheeStars, winScreenTwoStars, winScreenOneStars, gameOverScreen;
     private int currX, currY;
     private Point currPoint, prevPoint;
     private int shiftAfterTurn;
     private boolean pause;
+    private boolean win, lose;
     private int invokeLaterKey, invokeLaterTimer;
-    Animal animal;
-
+    public GameScreen(Foresty game, HashMap<Animal.TYPES, Integer> typesIntegerHashMap, int secForOneStar, int secForTwoStars, int secForThreeStars, int percOfFillForWin) {
+        this.game = game;
+        this.typesIntegerHashMap = typesIntegerHashMap;
+        this.secForOneStar = secForOneStar;
+        this.secForTwoStars = secForTwoStars;
+        this.secForThreeStars = secForThreeStars;
+        this.percOfFillForWin = percOfFillForWin;
+    }
 
     @Override
     public void show() {
@@ -66,6 +69,8 @@ public class GameScreen extends ScreenAdapter {
         rocksOnSand = new Texture(Gdx.files.internal("rocksOnSand.png"));
         grassOnSand = new Texture(Gdx.files.internal("grassOnSand.png"));
         rabbitTexture = new Texture(Gdx.files.internal("rabbit.gif"));
+        winScreenTheeStars = new Texture(Gdx.files.internal("win3stars.png"));
+        gameOverScreen = new Texture(Gdx.files.internal("gameover.png"));
         shapeRenderer = new ShapeRenderer();
         tracePoints = new LinkedHashSet<>();
         borderPoints = new HashSet<>();
@@ -73,6 +78,7 @@ public class GameScreen extends ScreenAdapter {
         rows = Gdx.graphics.getHeight() / RECT_SIZE;
         columns = Gdx.graphics.getWidth() / RECT_SIZE;
         grid = new char[rows][columns];
+        win = false;
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
                 grid[i][j] = '.';
@@ -100,19 +106,39 @@ public class GameScreen extends ScreenAdapter {
         shiftAfterTurn = 0;
         turnedBefore = false;
         pause = false;
+        lose = false;
         invokeLaterKey = -1;
         invokeLaterTimer = 0;
 //        animal = new Animal(rabbitTexture, RECT_SIZE, 2, 5, grid, spriteBatch, borderPoints,  tracePoints);
         animals = new ArrayList<>();
-        for (Map.Entry<Animal.TYPES, Integer> entry: typesIntegerHashMap.entrySet()){
-            for (int i=0; i<entry.getValue(); i++){
+        for (Map.Entry<Animal.TYPES, Integer> entry : typesIntegerHashMap.entrySet()) {
+            for (int i = 0; i < entry.getValue(); i++) {
                 animals.add(new Animal(entry.getKey().getStringAnimationHashMap(), entry.getKey().getAnimalXVel(), entry.getKey().getAnimalYVel(), grid, spriteBatch, borderPoints, tracePoints));
             }
         }
+
+        Gdx.input.setInputProcessor(new InputAdapter() {
+            @Override
+            public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+                if(screenX>= 374 && screenX <= 450 && screenY>= 460 && screenY <= 535){
+                    //TODO: write that the level is completed, save the number os stars
+                    game.levelsScreen.levelCompleted();
+                    game.setScreen(game.levelsScreen);
+                }
+                else if(screenX>= 505 && screenX <= 580 && screenY>= 460 && screenY <= 535){
+                    // TODO: switch to next level, save data about completing level
+                    game.levelsScreen.levelCompleted();
+                }
+                return true;
+            }
+        });
+
     }
 
     @Override
     public void render(float data) {
+
+
 //        Pause game if space pressed on first time and resume on second press.
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             if (pause) pause = false;
@@ -153,14 +179,33 @@ public class GameScreen extends ScreenAdapter {
 //        Close batch.
         spriteBatch.end();
 //        Draw animal.
-        for (Animal animal: animals){
+        for (Animal animal : animals) {
             if (!animal.isMovePaused()) animal.moveAndDrawAnimal();
         }
-//        if (!animal.isMovePaused()) animal.moveAndDrawAnimal();
-//        if(animal.crossLine(tracePoints)) {
-//            System.out.println("Monster cross the line");
-//            System.exit(0);
-//        }
+        if (win) {
+            showGameEndScreen(winScreenTheeStars);
+            game.levelsScreen.levelCompleted();
+        }
+        checkForLose();
+        if(lose){
+            showGameEndScreen(gameOverScreen);
+        }
+    }
+
+    /**
+     * use when the game ends to show gameOverScreenTexture
+     * @param gameOverScreenTexture
+     */
+
+    private void showGameEndScreen(Texture gameOverScreenTexture){
+        for (Animal animal : animals) {
+            animal.setAnimalXVel(0);
+            animal.setAnimalYVel(0);
+        }
+        spriteBatch.begin();
+        spriteBatch.draw(gameOverScreenTexture, Gdx.graphics.getWidth() / 2 - winScreenTheeStars.getWidth() / 2, Gdx.graphics.getHeight() / 2 - winScreenTheeStars.getHeight() / 2);
+        spriteBatch.end();
+        //todo: add listeners for lose, stop the game
     }
 
     @Override
@@ -324,13 +369,16 @@ public class GameScreen extends ScreenAdapter {
 //                    || borderPoints.contains(new Point(currPoint.x, currPoint.y + RECT_SIZE))
 //                    || borderPoints.contains(new Point(currPoint.x, currPoint.y - RECT_SIZE)))
 //                    && !tracePoints.isEmpty() && !borderPoints.contains(currPoint))
-            if ( grid[currPoint.y/RECT_SIZE][currPoint.x/RECT_SIZE]!='B' && !tracePoints.isEmpty()
-                    && (grid[currPoint.y/RECT_SIZE+1][currPoint.x/RECT_SIZE]=='B' || grid[currPoint.y/RECT_SIZE-1][currPoint.x/RECT_SIZE]=='B'
-                    || grid[currPoint.y/RECT_SIZE][currPoint.x/RECT_SIZE+1]=='B' || grid[currPoint.y/RECT_SIZE][currPoint.x/RECT_SIZE-1]=='B') ){
-                if (grid[currPoint.y/RECT_SIZE+1][currPoint.x/RECT_SIZE]=='B') lastPressedKey = Input.Keys.W;
-                else if (grid[currPoint.y/RECT_SIZE-1][currPoint.x/RECT_SIZE]=='B') lastPressedKey = Input.Keys.S;
-                else if (grid[currPoint.y/RECT_SIZE][currPoint.x/RECT_SIZE+1]=='B') lastPressedKey = Input.Keys.D;
-                else if (grid[currPoint.y/RECT_SIZE][currPoint.x/RECT_SIZE-1]=='B') lastPressedKey = Input.Keys.A;
+            if (grid[currPoint.y / RECT_SIZE][currPoint.x / RECT_SIZE] != 'B' && !tracePoints.isEmpty()
+                    && (grid[currPoint.y / RECT_SIZE + 1][currPoint.x / RECT_SIZE] == 'B' || grid[currPoint.y / RECT_SIZE - 1][currPoint.x / RECT_SIZE] == 'B'
+                    || grid[currPoint.y / RECT_SIZE][currPoint.x / RECT_SIZE + 1] == 'B' || grid[currPoint.y / RECT_SIZE][currPoint.x / RECT_SIZE - 1] == 'B')) {
+                if (grid[currPoint.y / RECT_SIZE + 1][currPoint.x / RECT_SIZE] == 'B') lastPressedKey = Input.Keys.W;
+                else if (grid[currPoint.y / RECT_SIZE - 1][currPoint.x / RECT_SIZE] == 'B')
+                    lastPressedKey = Input.Keys.S;
+                else if (grid[currPoint.y / RECT_SIZE][currPoint.x / RECT_SIZE + 1] == 'B')
+                    lastPressedKey = Input.Keys.D;
+                else if (grid[currPoint.y / RECT_SIZE][currPoint.x / RECT_SIZE - 1] == 'B')
+                    lastPressedKey = Input.Keys.A;
                 tracePoints.add(currPoint);
                 for (Point point : tracePoints) {
                     //TODO: very often OutOfBoundException is thrown on line below
@@ -374,29 +422,29 @@ public class GameScreen extends ScreenAdapter {
                         clockwise = false;
                     } else System.out.println("No turn, go straight on W key.");
                 } else if (lastPressedKey == Input.Keys.A) {
-                    if (grid[currPoint.y / RECT_SIZE + 1][currPoint.x / RECT_SIZE] == '.' && grid[currPoint.y / RECT_SIZE + 1][currPoint.x / RECT_SIZE - 1] == 'B'){
+                    if (grid[currPoint.y / RECT_SIZE + 1][currPoint.x / RECT_SIZE] == '.' && grid[currPoint.y / RECT_SIZE + 1][currPoint.x / RECT_SIZE - 1] == 'B') {
                         invokeLaterKey = Input.Keys.W;
                         clockwise = true;
-                    }else if (grid[currPoint.y / RECT_SIZE - 1][currPoint.x / RECT_SIZE] == '.' && grid[currPoint.y / RECT_SIZE - 1][currPoint.x / RECT_SIZE - 1] == 'B'){
+                    } else if (grid[currPoint.y / RECT_SIZE - 1][currPoint.x / RECT_SIZE] == '.' && grid[currPoint.y / RECT_SIZE - 1][currPoint.x / RECT_SIZE - 1] == 'B') {
                         invokeLaterKey = Input.Keys.S;
                         clockwise = false;
-                    }else System.out.println("Unexpected turn on A key.");
+                    } else System.out.println("Unexpected turn on A key.");
                 } else if (lastPressedKey == Input.Keys.S) {
-                    if (grid[currPoint.y / RECT_SIZE][currPoint.x / RECT_SIZE + 1] == '.' && grid[currPoint.y / RECT_SIZE - 1][currPoint.x / RECT_SIZE + 1] == 'B'){
+                    if (grid[currPoint.y / RECT_SIZE][currPoint.x / RECT_SIZE + 1] == '.' && grid[currPoint.y / RECT_SIZE - 1][currPoint.x / RECT_SIZE + 1] == 'B') {
                         invokeLaterKey = Input.Keys.D;
                         clockwise = false;
-                    }else if (grid[currPoint.y / RECT_SIZE][currPoint.x / RECT_SIZE - 1] == '.' && grid[currPoint.y / RECT_SIZE - 1][currPoint.x / RECT_SIZE - 1] == 'B'){
+                    } else if (grid[currPoint.y / RECT_SIZE][currPoint.x / RECT_SIZE - 1] == '.' && grid[currPoint.y / RECT_SIZE - 1][currPoint.x / RECT_SIZE - 1] == 'B') {
                         invokeLaterKey = Input.Keys.A;
                         clockwise = true;
-                    }else System.out.println("Unexpected turn on S key.");
+                    } else System.out.println("Unexpected turn on S key.");
                 } else if (lastPressedKey == Input.Keys.D) {
-                    if (grid[currPoint.y / RECT_SIZE + 1][currPoint.x / RECT_SIZE] == '.' && grid[currPoint.y / RECT_SIZE + 1][currPoint.x / RECT_SIZE + 1] == 'B'){
+                    if (grid[currPoint.y / RECT_SIZE + 1][currPoint.x / RECT_SIZE] == '.' && grid[currPoint.y / RECT_SIZE + 1][currPoint.x / RECT_SIZE + 1] == 'B') {
                         invokeLaterKey = Input.Keys.W;
                         clockwise = false;
-                    }else if (grid[currPoint.y / RECT_SIZE - 1][currPoint.x / RECT_SIZE] == '.' && grid[currPoint.y / RECT_SIZE - 1][currPoint.x / RECT_SIZE + 1] == 'B'){
+                    } else if (grid[currPoint.y / RECT_SIZE - 1][currPoint.x / RECT_SIZE] == '.' && grid[currPoint.y / RECT_SIZE - 1][currPoint.x / RECT_SIZE + 1] == 'B') {
                         invokeLaterKey = Input.Keys.S;
                         clockwise = true;
-                    }else System.out.println("Unexpected turn on D key.");
+                    } else System.out.println("Unexpected turn on D key.");
                 }
                 checkForWin();
             }
@@ -478,17 +526,23 @@ public class GameScreen extends ScreenAdapter {
         return grassOnSand;
     }
 
-    private void checkForWin(){
-        double currFillCells = 0, totalCells = (rows-2)*(columns-2);
-        for (int i=1; i<rows-1; i++){
-            for (int j=1; j<columns-1; j++){
+    private void checkForWin() {
+        double currFillCells = 0, totalCells = (rows - 2) * (columns - 2);
+        for (int i = 1; i < rows - 1; i++) {
+            for (int j = 1; j < columns - 1; j++) {
                 if (grid[i][j] != '.') currFillCells++;
             }
         }
-        if ((int) (currFillCells/totalCells*100) > percOfFillForWin){
-            //TODO: win statements.
-            game.setScreen(game.levelsScreen);
+        if ((int) (currFillCells / totalCells * 100) > percOfFillForWin) {
+            win = true;
         }
         //TODO: if all monsters are caught, then win.
+    }
+
+    private void checkForLose() {
+        for(Animal animal: animals){
+            if(animal.crossesLine())
+                lose = true;
+        }
     }
 }

@@ -19,30 +19,17 @@ public class LevelsScreen extends ScreenAdapter {
     Texture map;
     Texture send;
     Texture firstLevel, secondLevel, thirdLevel, fourthLevel, fifthLevel;
+    Texture star;
     Texture locked;
 
     float rectWidth;
     float rectHeight;
-    float moveSpeed = 300;
-
-    public enum numOfLevelsCompleted {
-        ZERO(0), ONE(1), TWO(2), THREE(3), FOUR(4);
-        private int num;
-
-        numOfLevelsCompleted(int num) {
-            this.num = num;
-        }
-
-        public int getNum() {
-            return num;
-        }
-    }
-
+    float moveSpeed = 600;
     private numOfLevelsCompleted level;
 
     LevelsScreen(Foresty game) {
         this.game = game;
-        level = numOfLevelsCompleted.FOUR;
+        level = numOfLevelsCompleted.THREE;
     }
 
     @Override
@@ -53,14 +40,15 @@ public class LevelsScreen extends ScreenAdapter {
 
         rectWidth = Gdx.graphics.getWidth();
         rectHeight = Gdx.graphics.getHeight();
-        map = new Texture(Gdx.files.internal("MMap.png"));
+        map = new Texture(Gdx.files.internal("map.png"));
         send = new Texture(Gdx.files.internal("send.png"));
-        firstLevel = new Texture(Gdx.files.internal("1level.png"));
-        secondLevel = new Texture(Gdx.files.internal("2level.png"));
-        thirdLevel = new Texture(Gdx.files.internal("3level.png"));
-        fourthLevel = new Texture(Gdx.files.internal("4level.png"));
-        fifthLevel = new Texture(Gdx.files.internal("5level.png"));
+        firstLevel = new Texture(Gdx.files.internal("farm1.png"));
+        secondLevel = new Texture(Gdx.files.internal("farm2.png"));
+        thirdLevel = new Texture(Gdx.files.internal("farm3.png"));
+        fourthLevel = new Texture(Gdx.files.internal("farm4.png"));
+        fifthLevel = new Texture(Gdx.files.internal("farm5.png"));
         locked = new Texture("locked.png");
+        star = new Texture("star.png");
         batch = new SpriteBatch();
 
         final HashMap<Animal.TYPES, Integer> levelFirstAnimals = new HashMap<>();
@@ -73,37 +61,49 @@ public class LevelsScreen extends ScreenAdapter {
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-                if (screenX >= map.getWidth() / 2 + 105
-                        && screenX <= map.getWidth() / 2 + 105 + firstLevel.getWidth()
-                        && screenY >= map.getHeight() / 10 + 45
-                        && screenY <= map.getHeight() / 10 + 45 + firstLevel.getHeight())
+                //mouse listener for first level
+                if (screenX >= map.getWidth() / 10 - firstLevel.getWidth() / 2
+                        && screenX <= map.getWidth() / 10 - firstLevel.getWidth() / 2 + firstLevel.getWidth() * 2
+                        && (Gdx.graphics.getHeight() - screenY) >= map.getHeight() / 2 - firstLevel.getHeight() / 2
+                        && (Gdx.graphics.getHeight() - screenY) <= map.getHeight() / 2 - firstLevel.getHeight() / 2 + 2*firstLevel.getHeight()){
                     game.setScreen(new GameScreen(game, levelFirstAnimals, 15, 30, 45, 75));
-                else if (screenX >= map.getWidth() / 2 + 80
-                        && screenX <= map.getWidth() / 2 + 80 + secondLevel.getWidth()
-                        && screenY >= map.getHeight() / 10 + 45
-                        && screenY <= map.getHeight() / 10 + 45 + secondLevel.getHeight()
+                }
+                //mouse listener for second level
+                else if (screenX >= map.getWidth() / 5 + map.getWidth() / 10 - secondLevel.getWidth() / 2
+                        && screenX <= map.getWidth() / 5 + map.getWidth() / 10 - secondLevel.getWidth() / 2 + 2*(secondLevel.getWidth())
+                        && (Gdx.graphics.getHeight() - screenY) >= map.getHeight() / 2 - secondLevel.getHeight() / 2
+                        && (Gdx.graphics.getHeight() - screenY) <= map.getHeight() / 2 - firstLevel.getHeight() / 2 + 2*(secondLevel.getHeight())
                         && level.getNum() + 1 >= 2)
+                    System.out.println(2);
                     //TODO: set correct parameters to new screen in all cases below.
-                    game.setScreen(new GameScreen(game, levelFirstAnimals, 15, 30, 45, 75));
-                else if (screenX >= map.getWidth() / 2 + 50
-                        && screenX <= map.getWidth() / 2 + 50 + thirdLevel.getWidth()
-                        && screenY >= 2 * map.getHeight() / 5 + map.getHeight() / 10 + 100
-                        && screenY <= 2 * map.getHeight() / 5 + map.getHeight() / 10 + 100 + thirdLevel.getHeight()
+                    //game.setScreen(new GameScreen(game, levelFirstAnimals, 15, 30, 45, 75));
 
+                //mouse listener for third level
+                else if (screenX >=2 * map.getWidth() / 5 + map.getWidth() / 10 - thirdLevel.getWidth() / 2
+                        && screenX <= 2 * map.getWidth() / 5 + map.getWidth() / 10 - thirdLevel.getWidth() / 2 + 2*thirdLevel.getWidth()
+                        && (Gdx.graphics.getHeight() - screenY) >= map.getHeight() / 2 - thirdLevel.getHeight() / 2
+                        && (Gdx.graphics.getHeight() - screenY) <= map.getHeight() / 2 - firstLevel.getHeight() / 2 + 2*thirdLevel.getHeight()
                         && level.getNum() + 1 >= 3)
-                    game.setScreen(new GameScreen(game, levelFirstAnimals, 15, 30, 45, 75));
-                else if (screenX >= map.getWidth() / 2 + 20
-                        && screenX <= map.getWidth() / 2 + 20 + fourthLevel.getWidth()
-                        && screenY >= 3 * map.getHeight() / 5 + map.getHeight() / 10
-                        && screenY <= 3 * map.getHeight() / 5 + map.getHeight() / 10 + fourthLevel.getHeight()
+                    System.out.println(3);
+                    //game.setScreen(new GameScreen(game, levelFirstAnimals, 15, 30, 45, 75));
+
+                //mouse listener for fourth level
+                else if (screenX >= 3 * map.getWidth() / 5 + map.getWidth() / 10 - fourthLevel.getWidth() / 2
+                        && screenX <= 3 * map.getWidth() / 5 + map.getWidth() / 10 - fourthLevel.getWidth() / 2 + 2*fourthLevel.getWidth()
+                        && (Gdx.graphics.getHeight() - screenY) >= map.getHeight() / 2 - fourthLevel.getHeight() / 2
+                        && (Gdx.graphics.getHeight() - screenY) <= map.getHeight() / 2 - fourthLevel.getHeight() / 2 + 2*fourthLevel.getHeight()
                         && level.getNum() + 1 >= 4)
-                    game.setScreen(new GameScreen(game, levelFirstAnimals, 15, 30, 45, 75));
-                else if (screenX >= map.getWidth() / 2 + secondLevel.getWidth() - 40
-                        && screenX <= map.getWidth() / 2 + secondLevel.getWidth() - 40 + fifthLevel.getWidth()
-                        && screenY >= 4 * map.getHeight() / 5 + map.getHeight() / 10
-                        && screenY <= 4 * map.getHeight() / 5 + map.getHeight() / 10 + fifthLevel.getHeight()
+                    System.out.println(4);
+                    //game.setScreen(new GameScreen(game, levelFirstAnimals, 15, 30, 45, 75));
+
+                //mouse listener for fifth level
+                else if (screenX >= 4 * map.getWidth() / 5 + map.getWidth() / 10 - fifthLevel.getWidth() / 2
+                        && screenX <= 4 * map.getWidth() / 5 + map.getWidth() / 10 - fifthLevel.getWidth() / 2 + 2*fifthLevel.getWidth()
+                        && (Gdx.graphics.getHeight() - screenY) >= map.getHeight() / 2 - fifthLevel.getHeight() / 2
+                        && (Gdx.graphics.getHeight() - screenY) <= map.getHeight() / 2 - fifthLevel.getHeight() / 2 + 2*fifthLevel.getHeight()
                         && level.getNum() + 1 >= 5)
-                    game.setScreen(new GameScreen(game, levelFirstAnimals, 15, 30, 45, 75));
+                    System.out.println(5);
+                    //game.setScreen(new GameScreen(game, levelFirstAnimals, 15, 30, 45, 75));
                 return true;
             }
         });
@@ -112,10 +112,10 @@ public class LevelsScreen extends ScreenAdapter {
 
     @Override
     public void render(float data) {
-        if (Gdx.input.isKeyPressed(Input.Keys.W) && camera.position.y < map.getHeight() - Gdx.graphics.getHeight() / 2) {
-            camera.translate(0, moveSpeed * Gdx.graphics.getDeltaTime());
-        } else if (Gdx.input.isKeyPressed(Input.Keys.S) && camera.position.y > Gdx.graphics.getHeight() / 2) {
-            camera.translate(0, -moveSpeed * Gdx.graphics.getDeltaTime());
+        if (Gdx.input.isKeyPressed(Input.Keys.D) && camera.position.x < map.getWidth() - Gdx.graphics.getWidth() / 2 - 30) {
+            camera.translate(moveSpeed * Gdx.graphics.getDeltaTime(), 0);
+        } else if (Gdx.input.isKeyPressed(Input.Keys.A) && camera.position.x > Gdx.graphics.getWidth() / 2 + 30) {
+            camera.translate(-moveSpeed * Gdx.graphics.getDeltaTime(), 0);
         }
 
         Gdx.gl.glClearColor(.25f, .25f, .25f, 1);
@@ -125,26 +125,107 @@ public class LevelsScreen extends ScreenAdapter {
         batch.setProjectionMatrix(camera.combined);
 
         batch.begin();
-        batch.draw(map, 0, 0, Gdx.graphics.getWidth(), map.getHeight());
-        batch.draw(firstLevel, map.getWidth() / 2 + 105, map.getHeight() / 10 + 45);
-        batch.draw(secondLevel, map.getWidth() / 2 + 80, map.getHeight() / 5 + map.getHeight() / 10);
-        if (level.getNum() + 1 <= 2)
-            batch.draw(locked, map.getWidth() / 2 + secondLevel.getWidth() + 45, map.getHeight() / 5 + map.getHeight() / 10, 50, 50);
-        batch.draw(thirdLevel, map.getWidth() / 2 + 50, 2 * map.getHeight() / 5 + map.getHeight() / 10 + 100);
+        batch.draw(map, 0, 0, map.getWidth(), Gdx.graphics.getHeight());
+
+        //firstFarm
+        batch.draw(firstLevel, map.getWidth() / 10 - firstLevel.getWidth() / 2, map.getHeight() / 2 - firstLevel.getHeight() / 2,
+                firstLevel.getWidth() * 2, firstLevel.getHeight() * 2);
+        for (int i = 0; i < numOfLevelsCompleted.ONE.getNumOfStars(); i++) {
+            batch.draw(star, (float) (map.getWidth() / 10 - firstLevel.getWidth() / 2 + 20 / 1.5 + i * (20)), map.getHeight() / 2 - firstLevel.getHeight() / 2, 20, 20);
+        }
+
+        //secondFarm
+        batch.draw(secondLevel, map.getWidth() / 5 + map.getWidth() / 10 - secondLevel.getWidth() / 2, map.getHeight() / 2 - secondLevel.getHeight() / 2,
+                secondLevel.getWidth() * 2, secondLevel.getHeight() * 2);
+        if (level.getNum() + 1 <= 2) {
+            batch.draw(locked, map.getWidth() / 5 + map.getWidth() / 10 - secondLevel.getWidth() / 2 + secondLevel.getWidth() + 45,
+                    map.getHeight() / 2 - secondLevel.getHeight() / 2, 50, 50);
+        }
+        for (int i = 0; i < numOfLevelsCompleted.TWO.getNumOfStars(); i++) {
+            batch.draw(star, (float) (map.getWidth() / 5 + map.getWidth() / 10 - secondLevel.getWidth() / 2 + 20 / 1.5 + i * (20)), map.getHeight() / 2 - secondLevel.getHeight() / 2, 20, 20);
+        }
+
+
+        //thirdFarm
+        batch.draw(thirdLevel, 2 * map.getWidth() / 5 + map.getWidth() / 10 - thirdLevel.getWidth() / 2, map.getHeight() / 2 - thirdLevel.getHeight() / 2,
+                thirdLevel.getWidth() * 2, thirdLevel.getHeight() * 2);
         if (level.getNum() + 1 <= 3)
-            batch.draw(locked, map.getWidth() / 2 + secondLevel.getWidth() + 10, 2 * map.getHeight() / 5 + map.getHeight() / 10 + 100, 50, 50);
-        batch.draw(fourthLevel, map.getWidth() / 2 + 20, 3 * map.getHeight() / 5 + map.getHeight() / 10);
+            batch.draw(locked, 2 * map.getWidth() / 5 + map.getWidth() / 10 - thirdLevel.getWidth() / 2 + thirdLevel.getWidth() + 100,
+                    map.getHeight() / 2 - thirdLevel.getHeight() / 2, 50, 50);
+        for (int i = 0; i < numOfLevelsCompleted.THREE.getNumOfStars(); i++) {
+            batch.draw(star, (float) (2 * map.getWidth() / 5 + map.getWidth() / 10 - thirdLevel.getWidth() / 2 + 20 / 1.5 + i * (20)), map.getHeight() / 2 - thirdLevel.getHeight() / 2, 20, 20);
+        }
+
+        //fourthFarm
+        batch.draw(fourthLevel, 3 * map.getWidth() / 5 + map.getWidth() / 10 - fourthLevel.getWidth() / 2, map.getHeight() / 2 - fourthLevel.getHeight() / 2,
+                fourthLevel.getWidth() * 2, fourthLevel.getHeight() * 2);
         if (level.getNum() + 1 <= 4)
-            batch.draw(locked, map.getWidth() / 2 + secondLevel.getWidth() - 20, 3 * map.getHeight() / 5 + map.getHeight() / 10, 50, 50);
-        batch.draw(fifthLevel, map.getWidth() / 2, 4 * map.getHeight() / 5 + map.getHeight() / 10);
+            batch.draw(locked, 3 * map.getWidth() / 5 + map.getWidth() / 10 - fourthLevel.getWidth() / 2 + fourthLevel.getWidth() + 100,
+                    map.getHeight() / 2 - fourthLevel.getHeight() / 2, 50, 50);
+        for (int i = 0; i < numOfLevelsCompleted.FOUR.getNumOfStars(); i++) {
+            batch.draw(star, (float) (3 * map.getWidth() / 5 + map.getWidth() / 10 - fourthLevel.getWidth() / 2 + 20 / 1.5 + i * (20)), map.getHeight() / 2 - fourthLevel.getHeight() / 2, 20, 20);
+        }
+
+
+        //fifthFarm
+        batch.draw(fifthLevel, 4 * map.getWidth() / 5 + map.getWidth() / 10 - fifthLevel.getWidth() / 2, map.getHeight() / 2 - fifthLevel.getHeight() / 2,
+                fifthLevel.getWidth() * 2, fifthLevel.getHeight() * 2);
         if (level.getNum() + 1 <= 5)
-            batch.draw(locked, map.getWidth() / 2 + secondLevel.getWidth() - 40, 4 * map.getHeight() / 5 + map.getHeight() / 10, 50, 50);
+            batch.draw(locked, 4 * map.getWidth() / 5 + map.getWidth() / 10 - fifthLevel.getWidth() / 2 + fifthLevel.getWidth() + 100,
+                    map.getHeight() / 2 - fifthLevel.getHeight() / 2, 50, 50);
+        for (int i = 0; i < numOfLevelsCompleted.FIVE.getNumOfStars(); i++) {
+            batch.draw(star, (float) (4 * map.getWidth() / 5 + map.getWidth() / 10 - fifthLevel.getWidth() / 2 + 20 / 1.5 + i * (20)), map.getHeight() / 2 - fourthLevel.getHeight() / 2, 20, 20);
+        }
+
         batch.end();
 
     }
 
+
+    /**
+     * sets the value of the current level to the next one
+     */
+    public void levelCompleted(){
+        if(level.getNum() == 0)
+            level = numOfLevelsCompleted.ONE;
+        else if(level.getNum() == 1)
+            level = numOfLevelsCompleted.TWO;
+        else if(level.getNum() == 2)
+            level = numOfLevelsCompleted.THREE;
+        else if(level.getNum() == 3)
+            level = numOfLevelsCompleted.FOUR;
+        else if(level.getNum() == 4)
+            level = numOfLevelsCompleted.FIVE;
+    }
+
     @Override
     public void dispose() {
+        game.music.dispose();
+    }
+
+    enum numOfLevelsCompleted {
+        ZERO(0, 3), ONE(1, 2), TWO(2, 1), THREE(3, 0), FOUR(4, 0), FIVE(5, 0);
+        private int num;
+        private int numOfStars;
+
+        numOfLevelsCompleted(int num, int numOfStars) {
+            this.num = num;
+            this.numOfStars = numOfStars;
+        }
+
+        public int getNumOfStars() {
+            return numOfStars;
+        }
+
+        public void setNumOfStars(int numOfStars) {
+            this.numOfStars = numOfStars;
+        }
+
+        public int getNum() {
+            return num;
+        }
     }
 
 }
+
+

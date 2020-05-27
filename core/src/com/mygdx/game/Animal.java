@@ -134,7 +134,7 @@ public class Animal {
     public void moveAndDrawAnimal() {
         if (!pause) {
             reflectFromTheBorderIfNeeded();
-            if (lineCrossed()) {
+            if (crossesLine()) {
                 System.out.println("Line crossed. End game.");
 
             }
@@ -158,6 +158,14 @@ public class Animal {
                 spriteBatch.draw(stringAnimationHashMap.get("south").getKeyFrame(elapsedTime, true), animalX, animalY, RECT_SIZE, RECT_SIZE);
             spriteBatch.end();
         }
+    }
+
+    public void setAnimalXVel(int animalXVel) {
+        this.animalXVel = animalXVel;
+    }
+
+    public void setAnimalYVel(int animalYVel) {
+        this.animalYVel = animalYVel;
     }
 
     public void pauseMove() {
@@ -201,7 +209,7 @@ public class Animal {
         }
     }
 
-    private boolean lineCrossed() {
+    public boolean crossesLine() {
         Iterator<Point> iterator = tracePoints.iterator();
         Point point;
         Rectangle traceRect, animalRect;
