@@ -19,14 +19,11 @@ public class GameScreen extends ScreenAdapter {
     private static final double PINK_FLOWER_TEXTURE_PROBABILITY = 0.02;
     private static final double BLUE_FLOWER_TEXTURE_PROBABILITY = 0.02;
     private static final double ROCKS_TEXTURE_PROBABILITY = 0.02;
-    private static final int NUM_OF_RENDERS_OF_SLOWING_DOWN = 500;
-    private static final int REDUCTION_OF_SPEED_WHILE_SLOWING_DOWN = 2;
     private final Foresty game;
     private final int secForOneStar;
     private final int secForTwoStars;
     private final int secForThreeStars;
     private final int percOfFillForWin;
-    private final long startTimeInMilliseconds;
     public ArrayList<Animal> animals;
     char[][] grid;
     int rows, columns;
@@ -42,27 +39,22 @@ public class GameScreen extends ScreenAdapter {
     HashMap<Point, Texture> contentPoints;
     Random random;
     boolean turnedBefore;
-    private HashMap<AnimalsTypes, Integer> typesIntegerHashMap;
+    Animal animal;
+    private HashMap<Animal.TYPES, Integer> typesIntegerHashMap;
     private Texture winScreenTheeStars, winScreenTwoStars, winScreenOneStars, gameOverScreen;
     private int currX, currY;
     private Point currPoint, prevPoint;
     private int shiftAfterTurn;
     private boolean pause;
-    private boolean win;
-    private boolean lose;
+    private boolean win, lose;
     private int invokeLaterKey, invokeLaterTimer;
-    private int timeElapsedFromTheSlowDown = 0;
-    private LevelsScreen.LEVELS level;
-
-    public GameScreen(Foresty game, HashMap<AnimalsTypes, Integer> typesIntegerHashMap, int secForOneStar, int secForTwoStars, int secForThreeStars, int percOfFillForWin, LevelsScreen.LEVELS level) {
+    public GameScreen(Foresty game, HashMap<Animal.TYPES, Integer> typesIntegerHashMap, int secForOneStar, int secForTwoStars, int secForThreeStars, int percOfFillForWin) {
         this.game = game;
         this.typesIntegerHashMap = typesIntegerHashMap;
         this.secForOneStar = secForOneStar;
         this.secForTwoStars = secForTwoStars;
         this.secForThreeStars = secForThreeStars;
         this.percOfFillForWin = percOfFillForWin;
-        startTimeInMilliseconds = System.currentTimeMillis();
-        this.level = level;
     }
 
     @Override
@@ -117,18 +109,11 @@ public class GameScreen extends ScreenAdapter {
         lose = false;
         invokeLaterKey = -1;
         invokeLaterTimer = 0;
+//        animal = new Animal(rabbitTexture, RECT_SIZE, 2, 5, grid, spriteBatch, borderPoints,  tracePoints);
         animals = new ArrayList<>();
-        for (Map.Entry<AnimalsTypes, Integer> entry : typesIntegerHashMap.entrySet()) {
+        for (Map.Entry<Animal.TYPES, Integer> entry : typesIntegerHashMap.entrySet()) {
             for (int i = 0; i < entry.getValue(); i++) {
-                if (entry.getKey() == AnimalsTypes.RABBIT)
-                    animals.add(new Rabbit(grid, spriteBatch, borderPoints, tracePoints));
-                else if (entry.getKey() == AnimalsTypes.HORSE) {
-                    animals.add(new Horse(grid, spriteBatch, borderPoints, tracePoints, this));
-                } else if (entry.getKey() == AnimalsTypes.GOAT_BABY) {
-                    animals.add(new GoatBaby(grid, spriteBatch, borderPoints, tracePoints, this));
-                } else if (entry.getKey() == AnimalsTypes.GOAT) {
-                    animals.add(new Goat(grid, spriteBatch, borderPoints, tracePoints));
-                }
+                animals.add(new Animal(entry.getKey().getStringAnimationHashMap(), entry.getKey().getAnimalXVel(), entry.getKey().getAnimalYVel(), grid, spriteBatch, borderPoints, tracePoints));
             }
         }
 
@@ -136,10 +121,12 @@ public class GameScreen extends ScreenAdapter {
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
                 if(screenX>= 374 && screenX <= 450 && screenY>= 460 && screenY <= 535){
+                    //TODO: write that the level is completed, save the number os stars
+                    game.levelsScreen.levelCompleted();
                     game.setScreen(game.levelsScreen);
                 }
                 else if(screenX>= 505 && screenX <= 580 && screenY>= 460 && screenY <= 535){
-                    // TODO: switch to next level
+                    // TODO: switch to next level, save data about completing level
                     game.levelsScreen.levelCompleted();
                 }
                 return true;
@@ -196,26 +183,8 @@ public class GameScreen extends ScreenAdapter {
             if (!animal.isMovePaused()) animal.moveAndDrawAnimal();
         }
         if (win) {
-            int gameTime = (int)(System.currentTimeMillis() - startTimeInMilliseconds) / 1000;
-            if (gameTime <= secForThreeStars){
-                showGameEndScreen(winScreenTheeStars);
-                level.setNumOfStars(3);
-            }
-            else if(gameTime <= secForTwoStars){
-                showGameEndScreen(winScreenTwoStars);
-                if(level.getNumOfStars() < 2)
-                level.setNumOfStars(2);}
-            else if(gameTime <= secForThreeStars){
-                showGameEndScreen(winScreenTheeStars);
-                if(level.getNumOfStars() < 1)
-                level.setNumOfStars(1);}
-            else{
-                //TODO create win screen with 0 stars
-                showGameEndScreen(winScreenTheeStars);
-                level.setNumOfStars(0);
-            }
+            showGameEndScreen(winScreenTheeStars);
             game.levelsScreen.levelCompleted();
-            return;
         }
         checkForLose();
         if(lose){
@@ -384,99 +353,104 @@ public class GameScreen extends ScreenAdapter {
     }
 
     private void addNewPoint(Point newPoint) {
-        if (!win && !lose) {
-            if (!newPoint.equals(currPoint)) {
-                prevPoint = currPoint;
-                currPoint = newPoint;
-                if (tracePoints.contains(currPoint) && !currPoint.equals(prevPoint)) {
-                    lose = true;
-                }
-                //end of capturing
+        if (!newPoint.equals(currPoint)) {
+            prevPoint = currPoint;
+            currPoint = newPoint;
+            if (tracePoints.contains(currPoint) && !currPoint.equals(prevPoint)) {
+                System.out.println("Lose! You can't reline current trace.");
+                System.exit(0);
+            }
+            //end of capturing
 
-                if (grid[currPoint.y / RECT_SIZE][currPoint.x / RECT_SIZE] != 'B' && !tracePoints.isEmpty()
-                        && (grid[currPoint.y / RECT_SIZE + 1][currPoint.x / RECT_SIZE] == 'B' || grid[currPoint.y / RECT_SIZE - 1][currPoint.x / RECT_SIZE] == 'B'
-                        || grid[currPoint.y / RECT_SIZE][currPoint.x / RECT_SIZE + 1] == 'B' || grid[currPoint.y / RECT_SIZE][currPoint.x / RECT_SIZE - 1] == 'B')) {
-                    if (grid[currPoint.y / RECT_SIZE + 1][currPoint.x / RECT_SIZE] == 'B')
-                        lastPressedKey = Input.Keys.W;
-                    else if (grid[currPoint.y / RECT_SIZE - 1][currPoint.x / RECT_SIZE] == 'B')
-                        lastPressedKey = Input.Keys.S;
-                    else if (grid[currPoint.y / RECT_SIZE][currPoint.x / RECT_SIZE + 1] == 'B')
-                        lastPressedKey = Input.Keys.D;
-                    else if (grid[currPoint.y / RECT_SIZE][currPoint.x / RECT_SIZE - 1] == 'B')
-                        lastPressedKey = Input.Keys.A;
-                    tracePoints.add(currPoint);
-                    for (Point point : tracePoints) {
-                        //TODO: very often OutOfBoundException is thrown on line below
-                        grid[point.y / RECT_SIZE][point.x / RECT_SIZE] = 'T';
-                    }
-                    int red = 0, green = 0;
+
+            //test
+//            if ((borderPoints.contains(new Point(currPoint.x + RECT_SIZE, currPoint.y))
+//                    || borderPoints.contains(new Point(currPoint.x - RECT_SIZE, currPoint.y))
+//                    || borderPoints.contains(new Point(currPoint.x, currPoint.y + RECT_SIZE))
+//                    || borderPoints.contains(new Point(currPoint.x, currPoint.y - RECT_SIZE)))
+//                    && !tracePoints.isEmpty() && !borderPoints.contains(currPoint))
+            if (grid[currPoint.y / RECT_SIZE][currPoint.x / RECT_SIZE] != 'B' && !tracePoints.isEmpty()
+                    && (grid[currPoint.y / RECT_SIZE + 1][currPoint.x / RECT_SIZE] == 'B' || grid[currPoint.y / RECT_SIZE - 1][currPoint.x / RECT_SIZE] == 'B'
+                    || grid[currPoint.y / RECT_SIZE][currPoint.x / RECT_SIZE + 1] == 'B' || grid[currPoint.y / RECT_SIZE][currPoint.x / RECT_SIZE - 1] == 'B')) {
+                if (grid[currPoint.y / RECT_SIZE + 1][currPoint.x / RECT_SIZE] == 'B') lastPressedKey = Input.Keys.W;
+                else if (grid[currPoint.y / RECT_SIZE - 1][currPoint.x / RECT_SIZE] == 'B')
+                    lastPressedKey = Input.Keys.S;
+                else if (grid[currPoint.y / RECT_SIZE][currPoint.x / RECT_SIZE + 1] == 'B')
+                    lastPressedKey = Input.Keys.D;
+                else if (grid[currPoint.y / RECT_SIZE][currPoint.x / RECT_SIZE - 1] == 'B')
+                    lastPressedKey = Input.Keys.A;
+                tracePoints.add(currPoint);
+                for (Point point : tracePoints) {
+                    //TODO: very often OutOfBoundException is thrown on line below
+                    grid[point.y / RECT_SIZE][point.x / RECT_SIZE] = 'T';
+                }
+                int red = 0, green = 0;
                 /*
                 Find first dot and flood fill from it.
                  */
-                    Point pointerOnDot = getDotInGrid();
-                    floodFill(pointerOnDot.x, pointerOnDot.y, 'R');
+                Point pointerOnDot = getDotInGrid();
+                floodFill(pointerOnDot.x, pointerOnDot.y, 'R');
                 /*
                 Fill rest of cells in green and count amount of both colors.
                  */
-                    for (int i = 0; i < rows; i++) {
-                        for (int j = 0; j < columns; j++) {
-                            if (grid[i][j] == '.') {
-                                grid[i][j] = 'G';
-                                green++;
-                            }
-                            if (grid[i][j] == 'R') red++;
+                for (int i = 0; i < rows; i++) {
+                    for (int j = 0; j < columns; j++) {
+                        if (grid[i][j] == '.') {
+                            grid[i][j] = 'G';
+                            green++;
                         }
+                        if (grid[i][j] == 'R') red++;
                     }
+                }
                 /*
                 Replace greater color on dots,
                 lower color on content inside bounds,
                 and trace on bounds
                 //TODO: compare number of enemies first, and if they equals, then compare squares.
                  */
-                    if (red > green) fillGrid('G', 'R');
-                    else fillGrid('R', 'G');
-                    //Redefine tracePoints.
-                    tracePoints.clear();
-                    printFiveCells();
-                    if (lastPressedKey == Input.Keys.W) {
-                        if (grid[currPoint.y / RECT_SIZE][currPoint.x / RECT_SIZE + 1] == '.' && grid[currPoint.y / RECT_SIZE + 1][currPoint.x / RECT_SIZE + 1] == 'B') {
-                            invokeLaterKey = Input.Keys.D;
-                            clockwise = true;
-                        } else if (grid[currPoint.y / RECT_SIZE][currPoint.x / RECT_SIZE - 1] == '.' && grid[currPoint.y / RECT_SIZE + 1][currPoint.x / RECT_SIZE - 1] == 'B') {
-                            invokeLaterKey = Input.Keys.A;
-                            clockwise = false;
-                        } else System.out.println("No turn, go straight on W key.");
-                    } else if (lastPressedKey == Input.Keys.A) {
-                        if (grid[currPoint.y / RECT_SIZE + 1][currPoint.x / RECT_SIZE] == '.' && grid[currPoint.y / RECT_SIZE + 1][currPoint.x / RECT_SIZE - 1] == 'B') {
-                            invokeLaterKey = Input.Keys.W;
-                            clockwise = true;
-                        } else if (grid[currPoint.y / RECT_SIZE - 1][currPoint.x / RECT_SIZE] == '.' && grid[currPoint.y / RECT_SIZE - 1][currPoint.x / RECT_SIZE - 1] == 'B') {
-                            invokeLaterKey = Input.Keys.S;
-                            clockwise = false;
-                        } else System.out.println("Unexpected turn on A key.");
-                    } else if (lastPressedKey == Input.Keys.S) {
-                        if (grid[currPoint.y / RECT_SIZE][currPoint.x / RECT_SIZE + 1] == '.' && grid[currPoint.y / RECT_SIZE - 1][currPoint.x / RECT_SIZE + 1] == 'B') {
-                            invokeLaterKey = Input.Keys.D;
-                            clockwise = false;
-                        } else if (grid[currPoint.y / RECT_SIZE][currPoint.x / RECT_SIZE - 1] == '.' && grid[currPoint.y / RECT_SIZE - 1][currPoint.x / RECT_SIZE - 1] == 'B') {
-                            invokeLaterKey = Input.Keys.A;
-                            clockwise = true;
-                        } else System.out.println("Unexpected turn on S key.");
-                    } else if (lastPressedKey == Input.Keys.D) {
-                        if (grid[currPoint.y / RECT_SIZE + 1][currPoint.x / RECT_SIZE] == '.' && grid[currPoint.y / RECT_SIZE + 1][currPoint.x / RECT_SIZE + 1] == 'B') {
-                            invokeLaterKey = Input.Keys.W;
-                            clockwise = false;
-                        } else if (grid[currPoint.y / RECT_SIZE - 1][currPoint.x / RECT_SIZE] == '.' && grid[currPoint.y / RECT_SIZE - 1][currPoint.x / RECT_SIZE + 1] == 'B') {
-                            invokeLaterKey = Input.Keys.S;
-                            clockwise = true;
-                        } else System.out.println("Unexpected turn on D key.");
-                    }
-                    checkForWin();
+                if (red > green) fillGrid('G', 'R');
+                else fillGrid('R', 'G');
+                //Redefine tracePoints.
+                tracePoints.clear();
+                printFiveCells();
+                if (lastPressedKey == Input.Keys.W) {
+                    if (grid[currPoint.y / RECT_SIZE][currPoint.x / RECT_SIZE + 1] == '.' && grid[currPoint.y / RECT_SIZE + 1][currPoint.x / RECT_SIZE + 1] == 'B') {
+                        invokeLaterKey = Input.Keys.D;
+                        clockwise = true;
+                    } else if (grid[currPoint.y / RECT_SIZE][currPoint.x / RECT_SIZE - 1] == '.' && grid[currPoint.y / RECT_SIZE + 1][currPoint.x / RECT_SIZE - 1] == 'B') {
+                        invokeLaterKey = Input.Keys.A;
+                        clockwise = false;
+                    } else System.out.println("No turn, go straight on W key.");
+                } else if (lastPressedKey == Input.Keys.A) {
+                    if (grid[currPoint.y / RECT_SIZE + 1][currPoint.x / RECT_SIZE] == '.' && grid[currPoint.y / RECT_SIZE + 1][currPoint.x / RECT_SIZE - 1] == 'B') {
+                        invokeLaterKey = Input.Keys.W;
+                        clockwise = true;
+                    } else if (grid[currPoint.y / RECT_SIZE - 1][currPoint.x / RECT_SIZE] == '.' && grid[currPoint.y / RECT_SIZE - 1][currPoint.x / RECT_SIZE - 1] == 'B') {
+                        invokeLaterKey = Input.Keys.S;
+                        clockwise = false;
+                    } else System.out.println("Unexpected turn on A key.");
+                } else if (lastPressedKey == Input.Keys.S) {
+                    if (grid[currPoint.y / RECT_SIZE][currPoint.x / RECT_SIZE + 1] == '.' && grid[currPoint.y / RECT_SIZE - 1][currPoint.x / RECT_SIZE + 1] == 'B') {
+                        invokeLaterKey = Input.Keys.D;
+                        clockwise = false;
+                    } else if (grid[currPoint.y / RECT_SIZE][currPoint.x / RECT_SIZE - 1] == '.' && grid[currPoint.y / RECT_SIZE - 1][currPoint.x / RECT_SIZE - 1] == 'B') {
+                        invokeLaterKey = Input.Keys.A;
+                        clockwise = true;
+                    } else System.out.println("Unexpected turn on S key.");
+                } else if (lastPressedKey == Input.Keys.D) {
+                    if (grid[currPoint.y / RECT_SIZE + 1][currPoint.x / RECT_SIZE] == '.' && grid[currPoint.y / RECT_SIZE + 1][currPoint.x / RECT_SIZE + 1] == 'B') {
+                        invokeLaterKey = Input.Keys.W;
+                        clockwise = false;
+                    } else if (grid[currPoint.y / RECT_SIZE - 1][currPoint.x / RECT_SIZE] == '.' && grid[currPoint.y / RECT_SIZE - 1][currPoint.x / RECT_SIZE + 1] == 'B') {
+                        invokeLaterKey = Input.Keys.S;
+                        clockwise = true;
+                    } else System.out.println("Unexpected turn on D key.");
                 }
-
-                if (!borderPoints.contains(currPoint)) tracePoints.add(newPoint);
-                else tracePoints.clear();
+                checkForWin();
             }
+
+            if (!borderPoints.contains(currPoint)) tracePoints.add(newPoint);
+            else tracePoints.clear();
         }
     }
 
@@ -559,70 +533,16 @@ public class GameScreen extends ScreenAdapter {
                 if (grid[i][j] != '.') currFillCells++;
             }
         }
-        System.out.println((int) ((currFillCells * 100) / totalCells));
-        if (((int) ((currFillCells * 100) / totalCells)) >= percOfFillForWin) {
+        if ((int) (currFillCells / totalCells * 100) > percOfFillForWin) {
             win = true;
-            return;
         }
-        for (Animal animal : animals) {
-            if (!animal.animalCaught()) {
-                win = false;
-                return;
-            }
-        }
-        win = true;
+        //TODO: if all monsters are caught, then win.
     }
 
     private void checkForLose() {
-        for (Animal animal : animals) {
-            if (animal.crossesLine()) {
+        for(Animal animal: animals){
+            if(animal.crossesLine())
                 lose = true;
-                pause();
-            }
         }
     }
-
-
-    public void slowDownAnimals(long time) {
-        if (timeElapsedFromTheSlowDown == 1) {
-            int newXVel, newYVel;
-            for (Animal animal : animals) {
-                newXVel = ((int) Math.signum(animal.getAnimalXVel())) * (Math.abs(animal.getAnimalXVel()) - REDUCTION_OF_SPEED_WHILE_SLOWING_DOWN);
-                newYVel = ((int) Math.signum(animal.getAnimalYVel())) * (Math.abs(animal.getAnimalYVel()) - REDUCTION_OF_SPEED_WHILE_SLOWING_DOWN);
-                animal.setAnimalXVel(newXVel);
-                animal.setAnimalYVel(newYVel);
-            }
-        } else if (timeElapsedFromTheSlowDown == NUM_OF_RENDERS_OF_SLOWING_DOWN) {
-            int newXVel, newYVel;
-            for (Animal animal : animals) {
-                newXVel = ((int) Math.signum(animal.getAnimalXVel())) * (Math.abs(animal.getAnimalXVel()) + REDUCTION_OF_SPEED_WHILE_SLOWING_DOWN);
-                newYVel = ((int) Math.signum(animal.getAnimalYVel())) * (Math.abs(animal.getAnimalYVel()) + REDUCTION_OF_SPEED_WHILE_SLOWING_DOWN);
-                animal.setAnimalXVel(newXVel);
-                animal.setAnimalYVel(newYVel);
-            }
-        }
-        for (Animal animal : animals) {
-            System.out.println(animal.getAnimalXVel());
-            System.out.println(animal.getAnimalYVel());
-        }
-        timeElapsedFromTheSlowDown++;
-    }
-
-    public boolean isWin() {
-        return win;
-    }
-
-    public void setWin(boolean win) {
-        this.win = win;
-    }
-
-    public boolean isLose() {
-        return lose;
-    }
-
-    public void setLose(boolean lose) {
-        this.lose = lose;
-    }
-
-
 }

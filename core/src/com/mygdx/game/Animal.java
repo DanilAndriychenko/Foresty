@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 
 import java.awt.*;
@@ -16,7 +18,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Animal {
     private static final float FRAME_DURATION = 0.025f;
-    protected static int RECT_SIZE = 32;
+    private static int RECT_SIZE = 32;
     private static HashMap<String, Animation<TextureRegion>> rabbitAnimationsHashMap, horseAnimationsHashMap,
             sheepAnimationsHashMap, goatAnimationsHashMap, goatBabyAnimationsHashMap;
 
@@ -36,7 +38,7 @@ public class Animal {
     private HashMap<String, Animation<TextureRegion>> stringAnimationHashMap;
     private int animalXVel, animalYVel;
     private int animalX, animalY;
-    protected char[][] grid;
+    private char[][] grid;
     private HashSet<Point> borderPoints;
     private LinkedHashSet<Point> tracePoints;
     private SpriteBatch spriteBatch;
@@ -128,22 +130,6 @@ public class Animal {
         return stringAnimationHashMap;
     }
 
-    public int getAnimalX() {
-        return animalX;
-    }
-
-    public void setAnimalX(int animalX) {
-        this.animalX = animalX;
-    }
-
-    public int getAnimalY() {
-        return animalY;
-    }
-
-    public void setAnimalY(int animalY) {
-        this.animalY = animalY;
-    }
-
     /**
      * Moves animal and draw it using spriteBatch.
      */
@@ -172,10 +158,6 @@ public class Animal {
                 spriteBatch.draw(stringAnimationHashMap.get("west").getKeyFrame(elapsedTime, true), animalX, animalY, RECT_SIZE, RECT_SIZE);
             else if (animalXVel < 0 && animalYVel < 0)
                 spriteBatch.draw(stringAnimationHashMap.get("south").getKeyFrame(elapsedTime, true), animalX, animalY, RECT_SIZE, RECT_SIZE);
-            spriteBatch.end();
-        } else{
-            spriteBatch.begin();
-            spriteBatch.draw(stringAnimationHashMap.get("stand").getKeyFrame(elapsedTime, true), animalX, animalY, RECT_SIZE, RECT_SIZE);
             spriteBatch.end();
         }
     }
@@ -227,6 +209,26 @@ public class Animal {
         if (reflectY) {
             animalYVel *= -1;
         }
+        //TODO: test this one below
+//        Circle animalRectWest = new Circle(animalX - animalXVel + 16, animalY + 16, RECT_SIZE/2);
+//        Circle animalRectNorth = new Circle(animalX + 16, animalY + animalYVel + 16, RECT_SIZE/2);
+//        Circle animalRectEast = new Circle(animalX + animalXVel + 16, animalY + 16, RECT_SIZE/2);
+//        Circle animalRectSouth = new Circle(animalX + 16, animalY - animalYVel + 16, RECT_SIZE/2);
+//        Iterator<Point> pointIterator = borderPoints.iterator();
+//        Point point;
+//        boolean reflectX = false, reflectY = false;
+//        while (pointIterator.hasNext()) {
+//            point = pointIterator.next();
+//            Rectangle borderRect = new Rectangle(point.x, point.y, 16, 16);
+//            if (Intersector.overlaps(animalRectWest, borderRect) || Intersector.overlaps(animalRectEast, borderRect)) reflectX = true;
+//            if (Intersector.overlaps(animalRectNorth, borderRect) || Intersector.overlaps(animalRectSouth, borderRect)) reflectY = true;
+//        }
+//        if (reflectX) {
+//            animalXVel *= -1;
+//        }
+//        if (reflectY) {
+//            animalYVel *= -1;
+//        }
     }
 
     public boolean crossesLine() {
@@ -244,26 +246,14 @@ public class Animal {
         return false;
     }
 
-    protected boolean animalCaught() {
+    private boolean animalCaught() {
         if (grid[animalY / RECT_SIZE * 2][animalX / RECT_SIZE * 2] == 'C' || grid[animalY / RECT_SIZE * 2][animalX / RECT_SIZE * 2] == 'B')
             return true;
         else return false;
     }
 
-    public int getAnimalXVel() {
-        return animalXVel;
-    }
-
-    public int getAnimalYVel() {
-        return animalYVel;
-    }
-
-    public HashMap<String, Animation<TextureRegion>> getStringAnimationHashMap() {
-        return stringAnimationHashMap;
-    }
-
-    /*public enum TYPES {
-        RABBIT(rabbitAnimationsHashMap, 2, 2),
+    public enum TYPES {
+        DOG(rabbitAnimationsHashMap, 2, 2),
         HORSE(horseAnimationsHashMap, 2, 2),
         SHEEP(sheepAnimationsHashMap, 2, 2),
         GOAT(goatAnimationsHashMap, 2, 2),
@@ -289,5 +279,5 @@ public class Animal {
         public int getAnimalYVel() {
             return animalYVel;
         }
-    }*/
+    }
 }
