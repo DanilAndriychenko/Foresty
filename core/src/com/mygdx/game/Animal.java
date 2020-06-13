@@ -16,7 +16,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Animal {
     private static final float FRAME_DURATION = 0.025f;
-    private static int RECT_SIZE = 32;
+    protected static int RECT_SIZE = 32;
     private static HashMap<String, Animation<TextureRegion>> rabbitAnimationsHashMap, horseAnimationsHashMap,
             sheepAnimationsHashMap, goatAnimationsHashMap, goatBabyAnimationsHashMap;
 
@@ -36,7 +36,7 @@ public class Animal {
     private HashMap<String, Animation<TextureRegion>> stringAnimationHashMap;
     private int animalXVel, animalYVel;
     private int animalX, animalY;
-    private char[][] grid;
+    protected char[][] grid;
     private HashSet<Point> borderPoints;
     private LinkedHashSet<Point> tracePoints;
     private SpriteBatch spriteBatch;
@@ -128,6 +128,22 @@ public class Animal {
         return stringAnimationHashMap;
     }
 
+    public int getAnimalX() {
+        return animalX;
+    }
+
+    public void setAnimalX(int animalX) {
+        this.animalX = animalX;
+    }
+
+    public int getAnimalY() {
+        return animalY;
+    }
+
+    public void setAnimalY(int animalY) {
+        this.animalY = animalY;
+    }
+
     /**
      * Moves animal and draw it using spriteBatch.
      */
@@ -156,6 +172,10 @@ public class Animal {
                 spriteBatch.draw(stringAnimationHashMap.get("west").getKeyFrame(elapsedTime, true), animalX, animalY, RECT_SIZE, RECT_SIZE);
             else if (animalXVel < 0 && animalYVel < 0)
                 spriteBatch.draw(stringAnimationHashMap.get("south").getKeyFrame(elapsedTime, true), animalX, animalY, RECT_SIZE, RECT_SIZE);
+            spriteBatch.end();
+        } else{
+            spriteBatch.begin();
+            spriteBatch.draw(stringAnimationHashMap.get("stand").getKeyFrame(elapsedTime, true), animalX, animalY, RECT_SIZE, RECT_SIZE);
             spriteBatch.end();
         }
     }
@@ -224,13 +244,25 @@ public class Animal {
         return false;
     }
 
-    private boolean animalCaught() {
+    protected boolean animalCaught() {
         if (grid[animalY / RECT_SIZE * 2][animalX / RECT_SIZE * 2] == 'C' || grid[animalY / RECT_SIZE * 2][animalX / RECT_SIZE * 2] == 'B')
             return true;
         else return false;
     }
 
-    public enum TYPES {
+    public int getAnimalXVel() {
+        return animalXVel;
+    }
+
+    public int getAnimalYVel() {
+        return animalYVel;
+    }
+
+    public HashMap<String, Animation<TextureRegion>> getStringAnimationHashMap() {
+        return stringAnimationHashMap;
+    }
+
+    /*public enum TYPES {
         RABBIT(rabbitAnimationsHashMap, 2, 2),
         HORSE(horseAnimationsHashMap, 2, 2),
         SHEEP(sheepAnimationsHashMap, 2, 2),
@@ -257,5 +289,5 @@ public class Animal {
         public int getAnimalYVel() {
             return animalYVel;
         }
-    }
+    }*/
 }
