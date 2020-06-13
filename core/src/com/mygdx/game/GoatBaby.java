@@ -21,20 +21,12 @@ public class GoatBaby extends Animal{
     @Override
     public void moveAndDrawAnimal() {
         if(this.animalCaught()){
-            for(Animal animal : uncaughtAnimals){
-                if(animal.animalCaught())
-                    return;
-            }
             gameScreen.setLose(true);
         }
         {
             super.moveAndDrawAnimal();
         }
-        for(Animal animal : gameScreen.animals){
-            if(!animal.animalCaught()){
-                uncaughtAnimals.add(animal);
-            }
-        }
+
     }
 
 }
