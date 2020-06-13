@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
+import org.w3c.dom.css.Rect;
 
 import java.util.HashMap;
 
@@ -41,7 +42,7 @@ public class LevelsScreen extends ScreenAdapter {
 
     static {
         // Add animals to levels hashMaps.
-        lvlFirstAnimalsHashMap.put(Animal.TYPES.SHEEP, 3);
+        lvlFirstAnimalsHashMap.put(Animal.TYPES.HORSE, 3);
 
         lvlSecondAnimalsHashMap.put(Animal.TYPES.SHEEP, 2);
         lvlSecondAnimalsHashMap.put(Animal.TYPES.DOG, 2);
@@ -64,7 +65,7 @@ public class LevelsScreen extends ScreenAdapter {
 
     float moveSpeed = 600;
 
-    public LevelsScreen(Foresty game) {
+    LevelsScreen(Foresty game) {
         this.game = game;
         level = LevelsCompleted.THREE;
     }
@@ -117,15 +118,15 @@ public class LevelsScreen extends ScreenAdapter {
 //            game.setScreen(new GameScreen(game, lvlFifthAnimalsHashMap, 15, 30, 45, 75));
         //TODO: this should work clearer, TEST
         if (rectFirstFarm.contains(screenX, screenY))
-            game.setScreen(new GameScreen(game, lvlFirstAnimalsHashMap, 15, 30, 45, 75));
+            game.setScreen(new GameScreen(game, lvlFirstAnimalsHashMap, 15, 30, 45, 75, LevelsCompleted.ONE));
         else if (rectSecondFarm.contains(screenX, screenY))
-            game.setScreen(new GameScreen(game, lvlSecondAnimalsHashMap, 15, 30, 45, 75));
+            game.setScreen(new GameScreen(game, lvlSecondAnimalsHashMap, 15, 30, 45, 75, LevelsCompleted.TWO));
         else if (rectThirdFarm.contains(screenX, screenY))
-            game.setScreen(new GameScreen(game, lvlThirdAnimalsHashMap, 15, 30, 45, 75));
+            game.setScreen(new GameScreen(game, lvlThirdAnimalsHashMap, 15, 30, 45, 75, LevelsCompleted.THREE));
         else if (rectFourthFarm.contains(screenX, screenY))
-            game.setScreen(new GameScreen(game, lvlFourthAnimalsHashMap, 15, 30, 45, 75));
+            game.setScreen(new GameScreen(game, lvlFourthAnimalsHashMap, 15, 30, 45, 75, LevelsCompleted.FOUR));
         else if (rectFifthFarm.contains(screenX, screenY))
-            game.setScreen(new GameScreen(game, lvlFifthAnimalsHashMap, 15, 30, 45, 75));
+            game.setScreen(new GameScreen(game, lvlFifthAnimalsHashMap, 15, 30, 45, 75, LevelsCompleted.FIVE));
     }
 
     @Override

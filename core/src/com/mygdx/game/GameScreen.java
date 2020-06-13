@@ -19,11 +19,14 @@ public class GameScreen extends ScreenAdapter {
     private static final double PINK_FLOWER_TEXTURE_PROBABILITY = 0.02;
     private static final double BLUE_FLOWER_TEXTURE_PROBABILITY = 0.02;
     private static final double ROCKS_TEXTURE_PROBABILITY = 0.02;
+    private static final int NUM_OF_RENDERS_OF_SLOWING_DOWN = 500;
+    private static final int REDUCTION_OF_SPEED_WHILE_SLOWING_DOWN = 2;
     private final Foresty game;
     private final int secForOneStar;
     private final int secForTwoStars;
     private final int secForThreeStars;
     private final int percOfFillForWin;
+    private final long startTimeInMilliseconds;
     public ArrayList<Animal> animals;
     char[][] grid;
     int rows, columns;
@@ -40,6 +43,8 @@ public class GameScreen extends ScreenAdapter {
     Random random;
     boolean turnedBefore;
     Animal animal;
+    private int timeElapsedFromTheSlowDown = 0;
+    private LevelsScreen.LevelsCompleted currentLevel;
     private HashMap<Animal.TYPES, Integer> typesIntegerHashMap;
     private Texture winScreenTheeStars, winScreenTwoStars, winScreenOneStars, gameOverScreen;
     private int currX, currY;
@@ -48,13 +53,16 @@ public class GameScreen extends ScreenAdapter {
     private boolean pause;
     private boolean win, lose;
     private int invokeLaterKey, invokeLaterTimer;
-    public GameScreen(Foresty game, HashMap<Animal.TYPES, Integer> typesIntegerHashMap, int secForOneStar, int secForTwoStars, int secForThreeStars, int percOfFillForWin) {
+
+    public GameScreen(Foresty game, HashMap<Animal.TYPES, Integer> typesIntegerHashMap, int secForOneStar, int secForTwoStars, int secForThreeStars, int percOfFillForWin, LevelsScreen.LevelsCompleted currentLevel) {
         this.game = game;
         this.typesIntegerHashMap = typesIntegerHashMap;
         this.secForOneStar = secForOneStar;
         this.secForTwoStars = secForTwoStars;
         this.secForThreeStars = secForThreeStars;
         this.percOfFillForWin = percOfFillForWin;
+        this.currentLevel = currentLevel;
+        startTimeInMilliseconds = System.currentTimeMillis();
     }
 
     @Override
@@ -120,12 +128,11 @@ public class GameScreen extends ScreenAdapter {
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-                if(screenX>= 374 && screenX <= 450 && screenY>= 460 && screenY <= 535){
+                if (screenX >= 374 && screenX <= 450 && screenY >= 460 && screenY <= 535) {
                     //TODO: write that the level is completed, save the number os stars
                     game.levelsScreen.levelCompleted();
                     game.setScreen(game.levelsScreen);
-                }
-                else if(screenX>= 505 && screenX <= 580 && screenY>= 460 && screenY <= 535){
+                } else if (screenX >= 505 && screenX <= 580 && screenY >= 460 && screenY <= 535) {
                     // TODO: switch to next level, save data about completing level
                     game.levelsScreen.levelCompleted();
                 }
@@ -137,7 +144,6 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void render(float data) {
-
 
 //        Pause game if space pressed on first time and resume on second press.
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
@@ -182,22 +188,39 @@ public class GameScreen extends ScreenAdapter {
         for (Animal animal : animals) {
             if (!animal.isMovePaused()) animal.moveAndDrawAnimal();
         }
+        checkForWin();
         if (win) {
-            showGameEndScreen(winScreenTheeStars);
-            game.levelsScreen.levelCompleted();
-        }
-        checkForLose();
-        if(lose){
-            showGameEndScreen(gameOverScreen);
+            int gameTime = (int) (System.currentTimeMillis() - startTimeInMilliseconds) / 1000;
+            if (gameTime <= secForThreeStars) {
+                showGameEndScreen(winScreenTheeStars);
+                currentLevel.setNumOfStars(3);
+            } else if (gameTime <= secForTwoStars) {
+                showGameEndScreen(winScreenTwoStars);
+                if (currentLevel.getNumOfStars() < 2)
+                    currentLevel.setNumOfStars(2);
+            } else if (gameTime <= secForThreeStars) {
+                showGameEndScreen(winScreenTheeStars);
+                if (currentLevel.getNumOfStars() < 1)
+                    currentLevel.setNumOfStars(1);
+            } else {
+                //TODO create win screen with 0 stars
+                showGameEndScreen(winScreenTheeStars);
+                currentLevel.setNumOfStars(0);
+            }
+            checkForLose();
+            if (lose) {
+                showGameEndScreen(gameOverScreen);
+            }
         }
     }
 
     /**
      * use when the game ends to show gameOverScreenTexture
+     *
      * @param gameOverScreenTexture
      */
 
-    private void showGameEndScreen(Texture gameOverScreenTexture){
+    private void showGameEndScreen(Texture gameOverScreenTexture) {
         for (Animal animal : animals) {
             animal.setAnimalXVel(0);
             animal.setAnimalYVel(0);
@@ -357,8 +380,7 @@ public class GameScreen extends ScreenAdapter {
             prevPoint = currPoint;
             currPoint = newPoint;
             if (tracePoints.contains(currPoint) && !currPoint.equals(prevPoint)) {
-                System.out.println("Lose! You can't reline current trace.");
-                System.exit(0);
+                lose = true;
             }
             //end of capturing
 
@@ -533,16 +555,66 @@ public class GameScreen extends ScreenAdapter {
                 if (grid[i][j] != '.') currFillCells++;
             }
         }
-        if ((int) (currFillCells / totalCells * 100) > percOfFillForWin) {
+        if (((int) ((currFillCells * 100) / totalCells)) >= percOfFillForWin) {
             win = true;
+            return;
         }
-        //TODO: if all monsters are caught, then win.
+        for (Animal animal : animals) {
+            if (!animal.animalCaught()) {
+                win = false;
+                return;
+            }
+        }
+        win = true;
     }
 
     private void checkForLose() {
-        for(Animal animal: animals){
-            if(animal.crossesLine())
+        for (Animal animal : animals) {
+            if (animal.crossesLine()) {
                 lose = true;
+                pause();
+            }
         }
+    }
+
+    public void slowDownAnimals() {
+        if (timeElapsedFromTheSlowDown == 1) {
+            int newXVel, newYVel;
+            for (Animal animal : animals) {
+                newXVel = ((int) Math.signum(animal.getAnimalXVel())) * (Math.abs(animal.getAnimalXVel()) - REDUCTION_OF_SPEED_WHILE_SLOWING_DOWN);
+                newYVel = ((int) Math.signum(animal.getAnimalYVel())) * (Math.abs(animal.getAnimalYVel()) - REDUCTION_OF_SPEED_WHILE_SLOWING_DOWN);
+                animal.setAnimalXVel(newXVel);
+                animal.setAnimalYVel(newYVel);
+            }
+        } else if (timeElapsedFromTheSlowDown == NUM_OF_RENDERS_OF_SLOWING_DOWN) {
+            int newXVel, newYVel;
+            for (Animal animal : animals) {
+                newXVel = ((int) Math.signum(animal.getAnimalXVel())) * (Math.abs(animal.getAnimalXVel()) + REDUCTION_OF_SPEED_WHILE_SLOWING_DOWN);
+                newYVel = ((int) Math.signum(animal.getAnimalYVel())) * (Math.abs(animal.getAnimalYVel()) + REDUCTION_OF_SPEED_WHILE_SLOWING_DOWN);
+                animal.setAnimalXVel(newXVel);
+                animal.setAnimalYVel(newYVel);
+            }
+        }
+        for (Animal animal : animals) {
+            System.out.println(animal.getAnimalXVel());
+            System.out.println(animal.getAnimalYVel());
+        }
+        timeElapsedFromTheSlowDown++;
+    }
+
+    public boolean isWin() {
+        return win;
+    }
+
+    public void setWin(boolean win) {
+        this.win = win;
+    }
+
+    public boolean isLose() {
+        return lose;
+    }
+
+    public void setLose(boolean lose) {
+        this.lose = lose;
     }
 }

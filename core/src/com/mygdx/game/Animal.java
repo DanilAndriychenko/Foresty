@@ -189,6 +189,14 @@ public class Animal {
         } while (grid[animalY / RECT_SIZE][animalX / RECT_SIZE] != '.');
     }
 
+    public int getAnimalXVel() {
+        return animalXVel;
+    }
+
+    public int getAnimalYVel() {
+        return animalYVel;
+    }
+
     private void reflectFromTheBorderIfNeeded() {
         Rectangle animalRectWest = new Rectangle(animalX - animalXVel, animalY, RECT_SIZE, RECT_SIZE);
         Rectangle animalRectNorth = new Rectangle(animalX, animalY + animalYVel, RECT_SIZE, RECT_SIZE);
@@ -246,7 +254,7 @@ public class Animal {
         return false;
     }
 
-    private boolean animalCaught() {
+    public boolean animalCaught() {
         if (grid[animalY / RECT_SIZE * 2][animalX / RECT_SIZE * 2] == 'C' || grid[animalY / RECT_SIZE * 2][animalX / RECT_SIZE * 2] == 'B')
             return true;
         else return false;
@@ -254,7 +262,7 @@ public class Animal {
 
     public enum TYPES {
         DOG(rabbitAnimationsHashMap, 2, 2),
-        HORSE(horseAnimationsHashMap, 2, 2),
+        HORSE(horseAnimationsHashMap, 4, 3),
         SHEEP(sheepAnimationsHashMap, 2, 2),
         GOAT(goatAnimationsHashMap, 2, 2),
         GOAT_BABY(goatBabyAnimationsHashMap, 2, 2);
@@ -272,12 +280,12 @@ public class Animal {
             return stringAnimationHashMap;
         }
 
-        public int getAnimalXVel() {
-            return animalXVel;
-        }
-
         public int getAnimalYVel() {
             return animalYVel;
+        }
+
+        public int getAnimalXVel() {
+            return animalXVel;
         }
     }
 }
