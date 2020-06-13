@@ -1,35 +1,39 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class TitleScreen extends ScreenAdapter {
 
     private static final int FRAME_COLS = 4, FRAME_ROWS = 1;
-    private final static int STARTING_X = 50;
-    private final static int STARTING_Y = 50;
-    Animation<TextureRegion> rabbitAnimation;
-    Texture rabbitTexture;
-    TextureRegion reg;
-    float stateTime;
-    private Foresty game;
-    private SpriteBatch batch;
-    private Texture startTexture;
-    private Texture startTextureWithLabel;
-    private Texture backgroundTexture;
-    private Texture rabbit;
-    private boolean startIsBig = false;
-    private boolean rabbitIsDrawn = false;
-    private int numOfRenders = 0;
-    private int rabbitX, rabbitY = 10;
-    private int rabbitSpeed = 5;
+    private static final long PRESS_BUTTON_AFTER_TIME = (long) (5 * Math.pow(10, 9)),
+            LABEL_BLINKS_AFTER_TIME = (long) (0.5 * Math.pow(10, 9)),
+            RABBIT_CROSS_FREQUENCY = (long) (6 * Math.pow(10, 9)),
+            RABBIT_Y = 5,
+            RABBIT_SPEED = 4;
+    private static final float FRAME_DURATION_RABBIT = 0.04f,
+            SCREEN_WIDTH = Gdx.graphics.getWidth(),
+            SCREEN_HEIGHT = Gdx.graphics.getHeight(),
+            BIG_LABEL_X = SCREEN_WIDTH * 0.2f,
+            BIG_LABEL_Y = SCREEN_HEIGHT * 0.6f,
+            BIG_LABEL_WIDTH = SCREEN_WIDTH * 0.6f,
+            BIG_LABEL_HEIGHT = SCREEN_HEIGHT * 0.2f,
+            SMALL_LABEL_COEFFICIENT = 0.8f;
+    private static final Texture rabbitTexture = new Texture(Gdx.files.internal("rabbit.png")),
+            startTexture = new Texture(Gdx.files.internal("start.png")),
+            startTextureWithLabel = new Texture(Gdx.files.internal("startWithLabel.png")),
+            backgroundTexture = new Texture(Gdx.files.internal("titleScreenBackground.jpg"));
+    private static Animation<TextureRegion> rabbitAnimation;
+    private static TextureRegion rabbitFrame;
+    private static float stateTime;
+    private static long timeStart, lastBlinkedTime, rabbitFinishedCrossing;
+    private static boolean startLabelIsBig = false;
+    private static int rabbitX;
+    private final Foresty game;
 
     public TitleScreen(Foresty game) {
         this.game = game;
@@ -37,36 +41,14 @@ public class TitleScreen extends ScreenAdapter {
 
     @Override
     public void show() {
-        Gdx.input.setInputProcessor(new InputAdapter() {
-            @Override
-            public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-                if (screenX >= Gdx.graphics.getWidth() / 2 - Gdx.graphics.getWidth() / 3
-                        && screenX <= Gdx.graphics.getWidth() / 2 - Gdx.graphics.getWidth() / 3 + Gdx.graphics.getWidth() / 1.5
-                        && (Gdx.graphics.getHeight() - screenY) >= Gdx.graphics.getHeight() / 2 - Gdx.graphics.getHeight() / 11 + Gdx.graphics.getHeight() / 6
-                        && (Gdx.graphics.getHeight() - screenY) <= Gdx.graphics.getHeight() / 2 - Gdx.graphics.getHeight() / 11 + Gdx.graphics.getHeight() / 6 + Gdx.graphics.getHeight() / 5)
-                    game.setScreen(game.levelsScreen);
-                return true;
-            }
+        // Define all variables.
+        timeStart = System.nanoTime();
+        lastBlinkedTime = System.nanoTime();
 
-            @Override
-            public boolean keyTyped(char character) {
-                if(character == ' ')
-                    game.setScreen(game.levelsScreen);
-                return true;
-            }
-        });
-
-
-        game.music = Gdx.audio.newMusic(Gdx.files.internal("TitleScreenMusic.mp3"));
-        game.music.setLooping(true);
-        game.music.play();
-
-        rabbitTexture = new Texture(Gdx.files.internal("Rabbit.png"));
-
+        // Create rabbit animation.
         TextureRegion[][] tmp = TextureRegion.split(rabbitTexture,
                 rabbitTexture.getWidth() / FRAME_COLS,
                 rabbitTexture.getHeight() / FRAME_ROWS);
-
         TextureRegion[] walkFrames = new TextureRegion[FRAME_COLS * FRAME_ROWS];
         int index = 0;
         for (int i = 0; i < FRAME_ROWS; i++) {
@@ -74,69 +56,64 @@ public class TitleScreen extends ScreenAdapter {
                 walkFrames[index++] = tmp[i][j];
             }
         }
-
-        rabbitAnimation = new Animation<>(0.04f, walkFrames);
+        rabbitAnimation = new Animation<>(FRAME_DURATION_RABBIT, walkFrames);
         stateTime = 0f;
-
-        batch = new SpriteBatch();
-        startTexture = new Texture(Gdx.files.internal("start.png"));
-        startTextureWithLabel = new Texture(Gdx.files.internal("startWithLabel.png"));
-        backgroundTexture = new Texture(Gdx.files.internal("titleScreenBackground.jpg"));
-        rabbit = new Texture(Gdx.files.internal("rabbit.gif"));
     }
 
     @Override
     public void render(float delta) {
+        // If user press space key, then go to the next scene.
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) game.setScreen(game.levelsScreen);
+
+        // For drawing current rabbit animation frame.
         stateTime += Gdx.graphics.getDeltaTime();
-        reg = rabbitAnimation.getKeyFrame(stateTime, true);
+        rabbitFrame = rabbitAnimation.getKeyFrame(stateTime, true);
 
+        game.spriteBatch.begin();
 
-        Gdx.gl.glClearColor(.25f, .25f, .25f, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        // Drawing background.
+        game.spriteBatch.draw(backgroundTexture, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-        batch.begin();
-        //background
-        batch.draw(backgroundTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        if (numOfRenders == 350) {
-            numOfRenders = 0;
-            rabbitIsDrawn = false;
-            rabbitX = 10;
-            rabbitY = 10;
+        // If time of showing label of some size is over, then change size.
+        if (System.nanoTime() - lastBlinkedTime > LABEL_BLINKS_AFTER_TIME) {
+            lastBlinkedTime = System.nanoTime();
+            if (startLabelIsBig) startLabelIsBig = false;
+            else startLabelIsBig = true;
         }
-        //small start label
-        if (numOfRenders % 50 <= 25) {
-            if (stateTime >= 2.5 && stateTime <= 50)
-                batch.draw(startTextureWithLabel, Gdx.graphics.getWidth() / 2 - Gdx.graphics.getWidth() / 3, Gdx.graphics.getHeight() / 2 - Gdx.graphics.getHeight() / 11 + Gdx.graphics.getHeight() / 6, (float) (Gdx.graphics.getWidth() / 1.5), Gdx.graphics.getHeight() / 5);
+
+        // Draw appropriate label depending of boolean startLabelIsBig value
+        if (!startLabelIsBig) {
+            if (System.nanoTime() - timeStart >= PRESS_BUTTON_AFTER_TIME) game.spriteBatch.draw(startTextureWithLabel,
+                    BIG_LABEL_X + (BIG_LABEL_WIDTH * (1 - SMALL_LABEL_COEFFICIENT)) * 0.5f,
+                    BIG_LABEL_Y + (BIG_LABEL_HEIGHT * (1 - SMALL_LABEL_COEFFICIENT)) * 0.5f,
+                    BIG_LABEL_WIDTH * SMALL_LABEL_COEFFICIENT, BIG_LABEL_HEIGHT * SMALL_LABEL_COEFFICIENT);
             else
-                batch.draw(startTexture, Gdx.graphics.getWidth() / 2 - Gdx.graphics.getWidth() / 3, Gdx.graphics.getHeight() / 2 - Gdx.graphics.getHeight() / 11 + Gdx.graphics.getHeight() / 6, (float) (Gdx.graphics.getWidth() / 1.5), Gdx.graphics.getHeight() / 5);
+                game.spriteBatch.draw(startTexture, BIG_LABEL_X + (BIG_LABEL_WIDTH * (1 - SMALL_LABEL_COEFFICIENT)) * 0.5f,
+                        BIG_LABEL_Y + (BIG_LABEL_HEIGHT * (1 - SMALL_LABEL_COEFFICIENT)) * 0.5f,
+                        BIG_LABEL_WIDTH * SMALL_LABEL_COEFFICIENT, BIG_LABEL_HEIGHT * SMALL_LABEL_COEFFICIENT);
+        } else {
+            if (System.nanoTime() - timeStart >= PRESS_BUTTON_AFTER_TIME) game.spriteBatch.draw(startTextureWithLabel,
+                    BIG_LABEL_X, BIG_LABEL_Y, BIG_LABEL_WIDTH, BIG_LABEL_HEIGHT);
+            else game.spriteBatch.draw(startTexture, BIG_LABEL_X, BIG_LABEL_Y, BIG_LABEL_WIDTH, BIG_LABEL_HEIGHT);
+        }
 
+        // If rabbit goes out of the screen, then note the time and set rabbit out of the left window border,
+        // Otherwise just move rabbit.
+        if (rabbitX >= SCREEN_WIDTH) {
+            rabbitFinishedCrossing = System.nanoTime();
+            rabbitX = -(int) (SCREEN_WIDTH / 25);
+        } else if (rabbitFinishedCrossing == 0) {
+            rabbitX += RABBIT_SPEED;
         }
-        //big start label
-        else if (numOfRenders % 50 >= 25) {
-            if (stateTime >= 2.5 && stateTime <= 50)
-                batch.draw(startTextureWithLabel, (float) (Gdx.graphics.getWidth() / 2 - (Gdx.graphics.getWidth() / 3.4)), Gdx.graphics.getHeight() / 2 - Gdx.graphics.getHeight() / 13 + Gdx.graphics.getHeight() / 6, (float) (Gdx.graphics.getWidth() / 1.7), Gdx.graphics.getHeight() / 6);
-            else
-                batch.draw(startTexture, (float) (Gdx.graphics.getWidth() / 2 - (Gdx.graphics.getWidth() / 3.4)), Gdx.graphics.getHeight() / 2 - Gdx.graphics.getHeight() / 13 + Gdx.graphics.getHeight() / 6, (float) (Gdx.graphics.getWidth() / 1.7), Gdx.graphics.getHeight() / 6);
-        }
-        //rabbit appears
-        if (numOfRenders == 30)
-            rabbitIsDrawn = true;
-        //rabbit moves
-        if (rabbitIsDrawn) {
-            batch.draw(reg, rabbitX, rabbitY, Gdx.graphics.getWidth() / 25, Gdx.graphics.getHeight() / 25);
-            rabbitX += rabbitSpeed;
-        }
-        batch.end();
 
-        startIsBig = !startIsBig;
-        numOfRenders++;
+        // If time is noted and is over, then reset timer to zero.
+        if (rabbitFinishedCrossing != 0 && System.nanoTime() - rabbitFinishedCrossing >= RABBIT_CROSS_FREQUENCY) {
+            rabbitFinishedCrossing = 0;
+        }
+
+        // Just draw rabbit without worrying for anything.
+        game.spriteBatch.draw(rabbitFrame, rabbitX, RABBIT_Y, SCREEN_WIDTH / 25, SCREEN_HEIGHT / 25);
+
+        game.spriteBatch.end();
     }
-
-    @Override
-    public void hide() {
-        Gdx.input.setInputProcessor(null);
-        batch.dispose();
-        startTexture.dispose();
-    }
-
 }
