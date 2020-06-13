@@ -138,7 +138,6 @@ public class Animal {
             reflectFromTheBorderIfNeeded();
             if (crossesLine()) {
                 System.out.println("Line crossed. End game.");
-
             }
             animalX += animalXVel;
             animalY += animalYVel;

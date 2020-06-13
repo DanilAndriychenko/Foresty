@@ -21,6 +21,7 @@ public class GameScreen extends ScreenAdapter {
     private static final double ROCKS_TEXTURE_PROBABILITY = 0.02;
     private static final int NUM_OF_RENDERS_OF_SLOWING_DOWN = 500;
     private static final int REDUCTION_OF_SPEED_WHILE_SLOWING_DOWN = 2;
+    private static final Random random = new Random();
     private final Foresty game;
     private final int secForOneStar;
     private final int secForTwoStars;
@@ -28,21 +29,18 @@ public class GameScreen extends ScreenAdapter {
     private final int percOfFillForWin;
     private final long startTimeInMilliseconds;
     public ArrayList<Animal> animals;
-    char[][] grid;
-    int rows, columns;
-    int lastPressedKey;
-    boolean clockwise;
-    SpriteBatch spriteBatch;
-    Texture headTexture, traceTexture, borderTexture, backgroundTexture;
-    Texture blueFlowersOnSand, grassOnSand, pinkFlowersOnSand, rocksOnSand;
-    Texture rabbitTexture;
-    ShapeRenderer shapeRenderer;
-    LinkedHashSet<Point> tracePoints;
-    HashSet<Point> borderPoints;
-    HashMap<Point, Texture> contentPoints;
-    Random random;
+    public char[][] grid;
     boolean turnedBefore;
-    Animal animal;
+    private int rows, columns;
+    private int lastPressedKey;
+    private boolean clockwise;
+    private SpriteBatch spriteBatch;
+    private Texture headTexture, traceTexture, borderTexture, backgroundTexture;
+    private Texture blueFlowersOnSand, grassOnSand, pinkFlowersOnSand, rocksOnSand;
+    private ShapeRenderer shapeRenderer;
+    private LinkedHashSet<Point> tracePoints;
+    private HashSet<Point> borderPoints;
+    private HashMap<Point, Texture> contentPoints;
     private int timeElapsedFromTheSlowDown = 0;
     private LevelsScreen.LevelsCompleted currentLevel;
     private HashMap<Animal.TYPES, Integer> typesIntegerHashMap;
@@ -76,7 +74,6 @@ public class GameScreen extends ScreenAdapter {
         pinkFlowersOnSand = new Texture(Gdx.files.internal("pinkFlowersOnSand.png"));
         rocksOnSand = new Texture(Gdx.files.internal("rocksOnSand.png"));
         grassOnSand = new Texture(Gdx.files.internal("grassOnSand.png"));
-        rabbitTexture = new Texture(Gdx.files.internal("rabbit.gif"));
         winScreenTheeStars = new Texture(Gdx.files.internal("win3stars.png"));
         gameOverScreen = new Texture(Gdx.files.internal("gameover.png"));
         shapeRenderer = new ShapeRenderer();
@@ -110,14 +107,12 @@ public class GameScreen extends ScreenAdapter {
         lastPressedKey = Input.Keys.W;
         currPoint = new Point(currX, currY);
         prevPoint = null;
-        random = new Random();
         shiftAfterTurn = 0;
         turnedBefore = false;
         pause = false;
         lose = false;
         invokeLaterKey = -1;
         invokeLaterTimer = 0;
-//        animal = new Animal(rabbitTexture, RECT_SIZE, 2, 5, grid, spriteBatch, borderPoints,  tracePoints);
         animals = new ArrayList<>();
         for (Map.Entry<Animal.TYPES, Integer> entry : typesIntegerHashMap.entrySet()) {
             for (int i = 0; i < entry.getValue(); i++) {
@@ -129,7 +124,7 @@ public class GameScreen extends ScreenAdapter {
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
                 if (screenX >= 374 && screenX <= 450 && screenY >= 460 && screenY <= 535) {
-                    //TODO: write that the level is completed, save the number os stars
+                    //TODO: write that the level is completed, save the number of stars
                     game.levelsScreen.levelCompleted();
                     game.setScreen(game.levelsScreen);
                 } else if (screenX >= 505 && screenX <= 580 && screenY >= 460 && screenY <= 535) {
@@ -207,10 +202,10 @@ public class GameScreen extends ScreenAdapter {
                 showGameEndScreen(winScreenTheeStars);
                 currentLevel.setNumOfStars(0);
             }
-            checkForLose();
-            if (lose) {
-                showGameEndScreen(gameOverScreen);
-            }
+        }
+        checkForLose();
+        if (lose) {
+            showGameEndScreen(gameOverScreen);
         }
     }
 
@@ -568,7 +563,7 @@ public class GameScreen extends ScreenAdapter {
         win = true;
     }
 
-    private void checkForLose() {
+    void checkForLose() {
         for (Animal animal : animals) {
             if (animal.crossesLine()) {
                 lose = true;
