@@ -86,7 +86,7 @@ public class GameScreen extends ScreenAdapter {
         rows = Gdx.graphics.getHeight() / RECT_SIZE;
         columns = Gdx.graphics.getWidth() / RECT_SIZE;
         grid = new char[rows][columns];
-        win = true;
+        win = false;
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
                 grid[i][j] = '.';
