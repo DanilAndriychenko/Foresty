@@ -65,10 +65,10 @@ public class LevelsScreen extends ScreenAdapter {
         lvlFourthAnimalsHashMap.put(Animal.TYPES.GOAT, 1);
 
         lvlFifthAnimalsHashMap.put(Animal.TYPES.SHEEP, 1);
-        lvlFifthAnimalsHashMap.put(Animal.TYPES.DOG, 1);
+        /*lvlFifthAnimalsHashMap.put(Animal.TYPES.DOG, 1);
         lvlFifthAnimalsHashMap.put(Animal.TYPES.HORSE, 1);
         lvlFifthAnimalsHashMap.put(Animal.TYPES.GOAT, 1);
-        lvlFifthAnimalsHashMap.put(Animal.TYPES.GOAT_BABY, 1);
+        lvlFifthAnimalsHashMap.put(Animal.TYPES.GOAT_BABY, 1);*/
     }
 
 
