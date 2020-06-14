@@ -15,7 +15,7 @@ import java.util.LinkedHashSet;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Animal {
-    private static final float FRAME_DURATION = 0.025f;
+    private static final float FRAME_DURATION_MOVE = 0.025f, FRAME_DURATION_STAND = 0.5f;
     protected static int ANIMAL_SIZE = 32,
             RECT_SIZE = 16;
     private static HashMap<String, Animation<TextureRegion>> rabbitAnimationsHashMap, horseAnimationsHashMap,
@@ -35,8 +35,8 @@ public class Animal {
     }
 
     protected HashMap<String, Animation<TextureRegion>> stringAnimationHashMap;
-    protected int animalXVel, animalYVel;
-    protected int animalX, animalY;
+    protected double animalXVel, animalYVel;
+    protected double animalX, animalY;
     protected char[][] grid;
     protected HashSet<Point> borderPoints;
     private LinkedHashSet<Point> tracePoints;
@@ -116,11 +116,11 @@ public class Animal {
         }
         for (int j = 0; j < spritesInStandRow; j++) stand[j] = textureRegion[rowNumStandSprite][j];
         //TODO: reduce frame animation time.
-        Animation moveSouth = new Animation<>(FRAME_DURATION, south);
-        Animation moveEast = new Animation<>(FRAME_DURATION, east);
-        Animation moveNorth = new Animation<>(FRAME_DURATION, north);
-        Animation moveWest = new Animation<>(FRAME_DURATION, west);
-        Animation standAnimation = new Animation<>(FRAME_DURATION, stand);
+        Animation moveSouth = new Animation<>(FRAME_DURATION_MOVE, south);
+        Animation moveEast = new Animation<>(FRAME_DURATION_MOVE, east);
+        Animation moveNorth = new Animation<>(FRAME_DURATION_MOVE, north);
+        Animation moveWest = new Animation<>(FRAME_DURATION_MOVE, west);
+        Animation standAnimation = new Animation<>(FRAME_DURATION_STAND, stand);
         stringAnimationHashMap.put("south", moveSouth);
         stringAnimationHashMap.put("east", moveEast);
         stringAnimationHashMap.put("north", moveNorth);
@@ -146,17 +146,26 @@ public class Animal {
             if (animalCaught()) {
                 System.out.println("Animal has been caught.");
                 caught = true;
+                if (animalXVel>0) animalXVel=1;
+                else animalXVel=-1;
+                if (animalYVel>0) animalYVel=1;
+                else animalYVel=-1;
             }
             elapsedTime += Gdx.graphics.getDeltaTime();
             spriteBatch.begin();
             if (animalXVel > 0 && animalYVel > 0)
-                spriteBatch.draw(stringAnimationHashMap.get("north").getKeyFrame(elapsedTime, true), animalX, animalY, ANIMAL_SIZE, ANIMAL_SIZE);
+                spriteBatch.draw(stringAnimationHashMap.get("north").getKeyFrame(elapsedTime, true), (int) animalX, (int) animalY, ANIMAL_SIZE, ANIMAL_SIZE);
             else if (animalXVel > 0 && animalYVel < 0)
-                spriteBatch.draw(stringAnimationHashMap.get("east").getKeyFrame(elapsedTime, true), animalX, animalY, ANIMAL_SIZE, ANIMAL_SIZE);
+                spriteBatch.draw(stringAnimationHashMap.get("east").getKeyFrame(elapsedTime, true), (int) animalX, (int) animalY, ANIMAL_SIZE, ANIMAL_SIZE);
             else if (animalXVel < 0 && animalYVel > 0)
-                spriteBatch.draw(stringAnimationHashMap.get("west").getKeyFrame(elapsedTime, true), animalX, animalY, ANIMAL_SIZE, ANIMAL_SIZE);
+                spriteBatch.draw(stringAnimationHashMap.get("west").getKeyFrame(elapsedTime, true), (int) animalX, (int) animalY, ANIMAL_SIZE, ANIMAL_SIZE);
             else if (animalXVel < 0 && animalYVel < 0)
-                spriteBatch.draw(stringAnimationHashMap.get("south").getKeyFrame(elapsedTime, true), animalX, animalY, ANIMAL_SIZE, ANIMAL_SIZE);
+                spriteBatch.draw(stringAnimationHashMap.get("south").getKeyFrame(elapsedTime, true), (int) animalX, (int) animalY, ANIMAL_SIZE, ANIMAL_SIZE);
+            spriteBatch.end();
+        }else {
+            elapsedTime += Gdx.graphics.getDeltaTime();
+            spriteBatch.begin();
+            spriteBatch.draw(stringAnimationHashMap.get("stand").getKeyFrame(elapsedTime, true), (int) animalX, (int) animalY, ANIMAL_SIZE, ANIMAL_SIZE);
             spriteBatch.end();
         }
     }
@@ -177,18 +186,18 @@ public class Animal {
         do {
             animalX = ThreadLocalRandom.current().nextInt(ANIMAL_SIZE, Gdx.graphics.getWidth() - 2 * ANIMAL_SIZE + 1);
             animalY = ThreadLocalRandom.current().nextInt(ANIMAL_SIZE, Gdx.graphics.getHeight() - 2 * ANIMAL_SIZE + 1);
-        } while (grid[animalY / RECT_SIZE][animalX / RECT_SIZE] != '.');
+        } while (grid[(int) animalY / RECT_SIZE][(int) animalX / RECT_SIZE] != '.');
     }
 
-    public int getAnimalXVel() {
+    public double getAnimalXVel() {
         return animalXVel;
     }
 
-    public void setAnimalXVel(int animalXVel) {
+    public void setAnimalXVel(double animalXVel) {
         this.animalXVel = animalXVel;
     }
 
-    public int getAnimalYVel() {
+    public double getAnimalYVel() {
         return animalYVel;
     }
 
@@ -196,19 +205,19 @@ public class Animal {
         this.animalYVel = animalYVel;
     }
 
-    public int getAnimalX() {
+    public double getAnimalX() {
         return animalX;
     }
 
-    public int getAnimalY() {
+    public double getAnimalY() {
         return animalY;
     }
 
     private void reflectFromTheBorderIfNeeded() {
-        Rectangle animalRectWest = new Rectangle(animalX - animalXVel, animalY, ANIMAL_SIZE, ANIMAL_SIZE);
-        Rectangle animalRectNorth = new Rectangle(animalX, animalY + animalYVel, ANIMAL_SIZE, ANIMAL_SIZE);
-        Rectangle animalRectEast = new Rectangle(animalX + animalXVel, animalY, ANIMAL_SIZE, ANIMAL_SIZE);
-        Rectangle animalRectSouth = new Rectangle(animalX, animalY - animalYVel, ANIMAL_SIZE, ANIMAL_SIZE);
+        Rectangle animalRectWest = new Rectangle((int) (animalX - animalXVel), (int) animalY, ANIMAL_SIZE, ANIMAL_SIZE);
+        Rectangle animalRectNorth = new Rectangle((int) animalX, (int) (animalY + animalYVel), ANIMAL_SIZE, ANIMAL_SIZE);
+        Rectangle animalRectEast = new Rectangle((int) (animalX + animalXVel), (int) animalY, ANIMAL_SIZE, ANIMAL_SIZE);
+        Rectangle animalRectSouth = new Rectangle((int) animalX, (int) (animalY - animalYVel), ANIMAL_SIZE, ANIMAL_SIZE);
         Iterator<Point> pointIterator = borderPoints.iterator();
         Point point;
         boolean reflectX = false, reflectY = false;
@@ -250,7 +259,7 @@ public class Animal {
         Iterator<Point> iterator = tracePoints.iterator();
         Point point;
         Rectangle traceRect, animalRect;
-        animalRect = new Rectangle(animalX, animalY, ANIMAL_SIZE, ANIMAL_SIZE);
+        animalRect = new Rectangle((int) animalX, (int) animalY, ANIMAL_SIZE, ANIMAL_SIZE);
         while (iterator.hasNext()) {
             point = iterator.next();
             traceRect = new Rectangle(point.x, point.y, RECT_SIZE, RECT_SIZE);
@@ -262,7 +271,7 @@ public class Animal {
     }
 
     public boolean animalCaught() {
-        if (grid[animalY / RECT_SIZE][animalX / RECT_SIZE] == 'C' || grid[animalY / RECT_SIZE][animalX / RECT_SIZE] == 'B')
+        if (grid[(int) animalY / RECT_SIZE][(int) animalX / RECT_SIZE] == 'C' || grid[(int) animalY / RECT_SIZE][(int) animalX / RECT_SIZE] == 'B')
             return true;
         else return false;
     }

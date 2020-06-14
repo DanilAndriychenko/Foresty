@@ -22,8 +22,8 @@ public class Goat extends Animal {
     @Override
     public void moveAndDrawAnimal() {
         if (this.animalCaught()) {
-            int animalCurrGridX = 2 * this.getAnimalX() / ANIMAL_SIZE + 1;
-            int animalCurrGridY = 2 * this.getAnimalY() / ANIMAL_SIZE + 1;
+            int animalCurrGridX = (int) (2 * this.getAnimalX() / ANIMAL_SIZE + 1);
+            int animalCurrGridY = (int) (2 * this.getAnimalY() / ANIMAL_SIZE + 1);
             for (int y = animalCurrGridY - RADIUS_OF_CELLS_EATEN; y <= animalCurrGridY + RADIUS_OF_CELLS_EATEN; y++) {
                 for (int x = animalCurrGridX - RADIUS_OF_CELLS_EATEN; x <= animalCurrGridX + RADIUS_OF_CELLS_EATEN; x++) {
                     if (x < grid[0].length - 1 && x >= 0 && y < grid.length - 1 && y >= 0) {
@@ -52,5 +52,4 @@ public class Goat extends Animal {
             super.moveAndDrawAnimal();
         }
     }
-
 }

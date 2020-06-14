@@ -673,16 +673,16 @@ public class GameScreen extends ScreenAdapter {
         if (timeElapsedFromTheSlowDown == 1) {
             int newXVel, newYVel;
             for (Animal animal : animals) {
-                newXVel = ((int) Math.signum(animal.getAnimalXVel())) * (Math.abs(animal.getAnimalXVel()) - REDUCTION_OF_SPEED_WHILE_SLOWING_DOWN);
-                newYVel = ((int) Math.signum(animal.getAnimalYVel())) * (Math.abs(animal.getAnimalYVel()) - REDUCTION_OF_SPEED_WHILE_SLOWING_DOWN);
+                newXVel = (int) (((int) Math.signum(animal.getAnimalXVel())) * (Math.abs(animal.getAnimalXVel()) - REDUCTION_OF_SPEED_WHILE_SLOWING_DOWN));
+                newYVel = (int) (((int) Math.signum(animal.getAnimalYVel())) * (Math.abs(animal.getAnimalYVel()) - REDUCTION_OF_SPEED_WHILE_SLOWING_DOWN));
                 animal.setAnimalXVel(newXVel);
                 animal.setAnimalYVel(newYVel);
             }
         } else if (timeElapsedFromTheSlowDown == NUM_OF_RENDERS_OF_SLOWING_DOWN) {
             int newXVel, newYVel;
             for (Animal animal : animals) {
-                newXVel = ((int) Math.signum(animal.getAnimalXVel())) * (Math.abs(animal.getAnimalXVel()) + REDUCTION_OF_SPEED_WHILE_SLOWING_DOWN);
-                newYVel = ((int) Math.signum(animal.getAnimalYVel())) * (Math.abs(animal.getAnimalYVel()) + REDUCTION_OF_SPEED_WHILE_SLOWING_DOWN);
+                newXVel = (int) (((int) Math.signum(animal.getAnimalXVel())) * (Math.abs(animal.getAnimalXVel()) + REDUCTION_OF_SPEED_WHILE_SLOWING_DOWN));
+                newYVel = (int) (((int) Math.signum(animal.getAnimalYVel())) * (Math.abs(animal.getAnimalYVel()) + REDUCTION_OF_SPEED_WHILE_SLOWING_DOWN));
                 animal.setAnimalXVel(newXVel);
                 animal.setAnimalYVel(newYVel);
             }
