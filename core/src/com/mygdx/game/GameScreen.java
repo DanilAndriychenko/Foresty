@@ -37,6 +37,7 @@ public class GameScreen extends ScreenAdapter {
     SpriteBatch spriteBatch;
     Texture headTexture, traceTexture, borderTexture, backgroundTexture;
     Texture blueFlowersOnSand, grassOnSand, pinkFlowersOnSand, rocksOnSand;
+    Texture pauseTexture;
     Texture rabbitTexture;
     ShapeRenderer shapeRenderer;
     LinkedHashSet<Point> tracePoints;
@@ -78,6 +79,7 @@ public class GameScreen extends ScreenAdapter {
         rabbitTexture = new Texture(Gdx.files.internal("rabbit.gif"));
         winScreenTheeStars = new Texture(Gdx.files.internal("win3stars.png"));
         gameOverScreen = new Texture(Gdx.files.internal("gameover.png"));
+        pauseTexture = new Texture(Gdx.files.internal("pause.png"));
         shapeRenderer = new ShapeRenderer();
         tracePoints = new LinkedHashSet<>();
         borderPoints = new HashSet<>();
@@ -120,14 +122,17 @@ public class GameScreen extends ScreenAdapter {
         for (Map.Entry<Animal.TYPES, Integer> entry : typesIntegerHashMap.entrySet()) {
             for (int i = 0; i < entry.getValue(); i++) {
                 if(entry.getKey() == Animal.TYPES.DOG){
-                    animals.add(new Dog(grid, spriteBatch, borderPoints, tracePoints, this));
+                    animals.add(new Dog(grid, spriteBatch, borderPoints, tracePoints));
                 }else if(entry.getKey() == Animal.TYPES.HORSE){
                     animals.add(new Horse(grid, spriteBatch, borderPoints, tracePoints, this));
                 }else if(entry.getKey() == Animal.TYPES.GOAT){
                     animals.add(new Goat(grid, spriteBatch, borderPoints, tracePoints, contentPoints));
+                }else if(entry.getKey() == Animal.TYPES.GOAT_BABY){
+                    animals.add(new GoatBaby(grid, spriteBatch, borderPoints, tracePoints, this));
+                }else if(entry.getKey() == Animal.TYPES.SHEEP){
+                    animals.add(new Sheep(grid, spriteBatch, borderPoints, tracePoints));
                 }
-            /*    animals.add(new Animal(entry.getKey().getStringAnimationHashMap(), entry.getKey().getAnimalXVel(), entry.getKey().getAnimalYVel(), grid, spriteBatch, borderPoints, tracePoints));
-            */}
+            }
         }
 
         Gdx.input.setInputProcessor(new InputAdapter() {
@@ -155,70 +160,75 @@ public class GameScreen extends ScreenAdapter {
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             if (pause) pause = false;
             else pause = true;
-        }
+        }if(!pause) {
 //        Determine if user press one of the following keys.
-        ifKeyRecentlyPressed();
+            ifKeyRecentlyPressed();
 //        Move tile every render.
-        moveHead();
+            moveHead();
 //        Create point of current position of head tile.
-        Point newPoint = new Point(currX / RECT_SIZE * RECT_SIZE, currY / RECT_SIZE * RECT_SIZE);
-        addNewPoint(newPoint);
-        spriteBatch.begin();
+            Point newPoint = new Point(currX / RECT_SIZE * RECT_SIZE, currY / RECT_SIZE * RECT_SIZE);
+            addNewPoint(newPoint);
+            spriteBatch.begin();
 //        Draw background.
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
-                spriteBatch.draw(backgroundTexture, j * RECT_SIZE, i * RECT_SIZE, RECT_SIZE, RECT_SIZE);
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < columns; j++) {
+                    spriteBatch.draw(backgroundTexture, j * RECT_SIZE, i * RECT_SIZE, RECT_SIZE, RECT_SIZE);
+                }
             }
-        }
 //        Then draw content inside borders.
-        for (Map.Entry<Point, Texture> entry : contentPoints.entrySet()) {
-            spriteBatch.draw(entry.getValue(), entry.getKey().x, entry.getKey().y, RECT_SIZE, RECT_SIZE);
-        }
-//        Then draw borders of the map.
-        for (Point point : borderPoints) {
-            spriteBatch.draw(borderTexture, point.x, point.y, RECT_SIZE, RECT_SIZE);
-        }
-//        Draw trace after head.
-        Iterator<Point> pointIterator = tracePoints.iterator();
-        Point currPoint = null;
-        if (pointIterator.hasNext()) currPoint = pointIterator.next();
-        do {
-            if (currPoint != null) spriteBatch.draw(traceTexture, currPoint.x, currPoint.y, RECT_SIZE, RECT_SIZE);
-            if (pointIterator.hasNext()) currPoint = pointIterator.next();
-        } while (pointIterator.hasNext());
-//        And the last one, draw head tile.
-        spriteBatch.draw(headTexture, this.currPoint.x, this.currPoint.y, RECT_SIZE, RECT_SIZE);
-//        Close batch.
-        spriteBatch.end();
-//        Draw animal.
-        for (Animal animal : animals) {
-            if (!animal.isMovePaused()) animal.moveAndDrawAnimal();
-        }
-        checkForWin();
-        if (win) {
-            int gameTime = (int) (System.currentTimeMillis() - startTimeInMilliseconds) / 1000;
-            if (gameTime <= secForThreeStars) {
-                showGameEndScreen(winScreenTheeStars);
-                currentLevel.setNumOfStars(3);
-            } else if (gameTime <= secForTwoStars) {
-                showGameEndScreen(winScreenTwoStars);
-                if (currentLevel.getNumOfStars() < 2)
-                    currentLevel.setNumOfStars(2);
-            } else if (gameTime <= secForThreeStars) {
-                showGameEndScreen(winScreenTheeStars);
-                if (currentLevel.getNumOfStars() < 1)
-                    currentLevel.setNumOfStars(1);
-            } else {
-                //TODO create win screen with 0 stars
-                showGameEndScreen(winScreenTheeStars);
-                currentLevel.setNumOfStars(0);
+            for (Map.Entry<Point, Texture> entry : contentPoints.entrySet()) {
+                spriteBatch.draw(entry.getValue(), entry.getKey().x, entry.getKey().y, RECT_SIZE, RECT_SIZE);
             }
+//        Then draw borders of the map.
+            for (Point point : borderPoints) {
+                spriteBatch.draw(borderTexture, point.x, point.y, RECT_SIZE, RECT_SIZE);
+            }
+//        Draw trace after head.
+            Iterator<Point> pointIterator = tracePoints.iterator();
+            Point currPoint = null;
+            if (pointIterator.hasNext()) currPoint = pointIterator.next();
+            do {
+                if (currPoint != null) spriteBatch.draw(traceTexture, currPoint.x, currPoint.y, RECT_SIZE, RECT_SIZE);
+                if (pointIterator.hasNext()) currPoint = pointIterator.next();
+            } while (pointIterator.hasNext());
+//        And the last one, draw head tile.
+            spriteBatch.draw(headTexture, this.currPoint.x, this.currPoint.y, RECT_SIZE, RECT_SIZE);
+//        Close batch.
+            spriteBatch.end();
+//        Draw animal.
+            for (Animal animal : animals) {
+                if (!animal.isMovePaused()) animal.moveAndDrawAnimal();
+            }
+            checkForWin();
+            if (win) {
+                int gameTime = (int) (System.currentTimeMillis() - startTimeInMilliseconds) / 1000;
+                if (gameTime <= secForThreeStars) {
+                    showGameEndScreen(winScreenTheeStars);
+                    currentLevel.setNumOfStars(3);
+                } else if (gameTime <= secForTwoStars) {
+                    showGameEndScreen(winScreenTwoStars);
+                    if (currentLevel.getNumOfStars() < 2)
+                        currentLevel.setNumOfStars(2);
+                } else if (gameTime <= secForThreeStars) {
+                    showGameEndScreen(winScreenTheeStars);
+                    if (currentLevel.getNumOfStars() < 1)
+                        currentLevel.setNumOfStars(1);
+                } else {
+                    //TODO create win screen with 0 stars
+                    showGameEndScreen(winScreenTheeStars);
+                    currentLevel.setNumOfStars(0);
+                }
 
-        }
-        checkForLose();
-        if (lose) {
-            pause();
-            showGameEndScreen(gameOverScreen);
+            }
+            checkForLose();
+            if (lose) {
+                pause();
+                showGameEndScreen(gameOverScreen);
+            }
+        } else if(pause){
+            spriteBatch.begin();
+            spriteBatch.draw(pauseTexture, Gdx.graphics.getWidth()/2 - pauseTexture.getWidth()/2, Gdx.graphics.getHeight()/2 - pauseTexture.getHeight()/2);
+            spriteBatch.end();
         }
     }
 

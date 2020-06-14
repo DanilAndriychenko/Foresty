@@ -10,11 +10,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Dog extends Animal{
 
-    private GameScreen gameScreen;
-
-    public Dog(char[][] grid, SpriteBatch spriteBatch, HashSet<Point> borderPoints, LinkedHashSet<Point> tracePoints, GameScreen gameScreen){
+    public Dog(char[][] grid, SpriteBatch spriteBatch, HashSet<Point> borderPoints, LinkedHashSet<Point> tracePoints){
         super(Animal.TYPES.DOG.getStringAnimationHashMap() ,Animal.TYPES.DOG.getAnimalXVel(), Animal.TYPES.DOG.getAnimalYVel(), grid, spriteBatch, borderPoints, tracePoints);
-        this.gameScreen = gameScreen;
     }
 
 
