@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -56,6 +57,7 @@ public class GameScreen extends ScreenAdapter {
     private boolean pause;
     private boolean win, lose;
     private int invokeLaterKey, invokeLaterTimer;
+    private Music musicOnTitleAndLevelsScreens;
 
     public GameScreen(Foresty game, HashMap<Animal.TYPES, Integer> typesIntegerHashMap, int secForOneStar, int secForTwoStars, int secForThreeStars, int percOfFillForWin, LevelsScreen.LevelsCompleted currentLevel) {
         this.game = game;
@@ -142,6 +144,11 @@ public class GameScreen extends ScreenAdapter {
                     animals.add(new Sheep(grid, spriteBatch, borderPoints, tracePoints));
                 }
             }
+
+            game.musicOnTitleAndLevelsScreens.stop();
+            musicOnTitleAndLevelsScreens = Gdx.audio.newMusic(Gdx.files.internal("StardewValley-StardewValleyFairTheme_(tancpol.net).mp3"));
+            musicOnTitleAndLevelsScreens.setLooping(true);
+            musicOnTitleAndLevelsScreens.play();
         }
 
         Gdx.input.setInputProcessor(new InputAdapter() {
@@ -152,52 +159,106 @@ public class GameScreen extends ScreenAdapter {
                     Circle restart = new Circle(483, Gdx.graphics.getHeight() - 462, 40);
                     Circle next = new Circle(582, Gdx.graphics.getHeight() - 462, 40);
                     if (home.contains(screenX, Gdx.graphics.getHeight() - screenY))
+                    {
+                        musicOnTitleAndLevelsScreens.pause();
+                        game.musicOnTitleAndLevelsScreens.play();
                         game.setScreen(game.levelsScreen);
+                    }
                     else if (restart.contains(screenX, Gdx.graphics.getHeight() - screenY)) {
                         if (currentLevel == LevelsScreen.LevelsCompleted.ONE)
+                        {
+                            musicOnTitleAndLevelsScreens.pause();
                             game.setScreen(new GameScreen(game, LevelsScreen.lvlFirstAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.ONE));
+                        }
                         else if (currentLevel == LevelsScreen.LevelsCompleted.TWO)
+                        {
+                            musicOnTitleAndLevelsScreens.pause();
                             game.setScreen(new GameScreen(game, LevelsScreen.lvlSecondAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.TWO));
+                        }
                         else if (currentLevel == LevelsScreen.LevelsCompleted.THREE)
+                        {
+                            musicOnTitleAndLevelsScreens.pause();
                             game.setScreen(new GameScreen(game, LevelsScreen.lvlThirdAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.THREE));
+                        }
                         else if (currentLevel == LevelsScreen.LevelsCompleted.FOUR)
+                        {
+                            musicOnTitleAndLevelsScreens.pause();
                             game.setScreen(new GameScreen(game, LevelsScreen.lvlFourthAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.FOUR));
+                        }
                         else if (currentLevel == LevelsScreen.LevelsCompleted.FIVE)
+                        {
+                            musicOnTitleAndLevelsScreens.pause();
                             game.setScreen(new GameScreen(game, LevelsScreen.lvlFifthAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.FIVE));
+                        }
                     } else if (next.contains(screenX, Gdx.graphics.getHeight() - screenY)) {
                         if (currentLevel == LevelsScreen.LevelsCompleted.ONE)
+                        {
+                            musicOnTitleAndLevelsScreens.pause();
                             game.setScreen(new GameScreen(game, LevelsScreen.lvlSecondAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.TWO));
+                        }
                         else if (currentLevel == LevelsScreen.LevelsCompleted.TWO)
+                        {
+                            musicOnTitleAndLevelsScreens.pause();
                             game.setScreen(new GameScreen(game, LevelsScreen.lvlThirdAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.THREE));
+                        }
                         else if (currentLevel == LevelsScreen.LevelsCompleted.THREE)
+                        {
+                            musicOnTitleAndLevelsScreens.pause();
                             game.setScreen(new GameScreen(game, LevelsScreen.lvlFourthAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.FOUR));
+                        }
                         else if (currentLevel == LevelsScreen.LevelsCompleted.FOUR)
+                        {
+                            musicOnTitleAndLevelsScreens.pause();
                             game.setScreen(new GameScreen(game, LevelsScreen.lvlFifthAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.FIVE));
+                        }
                     }
                 } else if(win && currentLevel.getNum() == 5){
                     Circle home = new Circle(434, Gdx.graphics.getHeight() - 458, 40);
                     Circle restart = new Circle(528, Gdx.graphics.getHeight() - 462, 40);
                     if (home.contains(screenX, Gdx.graphics.getHeight() - screenY)) {
+
+                        musicOnTitleAndLevelsScreens.pause();
+                        game.musicOnTitleAndLevelsScreens.play();
                         game.setScreen(game.levelsScreen);
                     } else if(restart.contains(screenX, Gdx.graphics.getHeight() - screenY)){
+                        musicOnTitleAndLevelsScreens.pause();
                         game.setScreen(new GameScreen(game, LevelsScreen.lvlFifthAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.FIVE));
                     }
                 }else if (lose) {
                     Circle home = new Circle(424, Gdx.graphics.getHeight() - 466, 40);
                     Circle restart = new Circle(529, Gdx.graphics.getHeight() - 466, 40);
                     if (home.contains(screenX, Gdx.graphics.getHeight() - screenY))
+                    {
+                        musicOnTitleAndLevelsScreens.pause();
+                        game.musicOnTitleAndLevelsScreens.play();
                         game.setScreen(game.levelsScreen);
+                    }
                     else if (restart.contains(screenX, Gdx.graphics.getHeight() - screenY)) {
                         if (currentLevel == LevelsScreen.LevelsCompleted.ONE)
+                        {
+                            musicOnTitleAndLevelsScreens.pause();
                             game.setScreen(new GameScreen(game, LevelsScreen.lvlFirstAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.ONE));
+                        }
                         else if (currentLevel == LevelsScreen.LevelsCompleted.TWO)
+                        {
+                            musicOnTitleAndLevelsScreens.pause();
                             game.setScreen(new GameScreen(game, LevelsScreen.lvlSecondAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.TWO));
+                        }
                         else if (currentLevel == LevelsScreen.LevelsCompleted.THREE)
+                        {
+                            musicOnTitleAndLevelsScreens.pause();
                             game.setScreen(new GameScreen(game, LevelsScreen.lvlThirdAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.THREE));
+                        }
                         else if (currentLevel == LevelsScreen.LevelsCompleted.FOUR)
+                        {
+                            musicOnTitleAndLevelsScreens.pause();
                             game.setScreen(new GameScreen(game, LevelsScreen.lvlFourthAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.FOUR));
+                        }
                         else if (currentLevel == LevelsScreen.LevelsCompleted.FIVE)
+                        {
+                            musicOnTitleAndLevelsScreens.pause();
                             game.setScreen(new GameScreen(game, LevelsScreen.lvlFifthAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.FIVE));
+                        }
                     }
                 }
                 return true;
