@@ -17,7 +17,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Animal {
     private static final float FRAME_DURATION = 0.025f;
     protected static int ANIMAL_SIZE = 32,
-        RECT_SIZE = 16;
+            RECT_SIZE = 16;
     private static HashMap<String, Animation<TextureRegion>> rabbitAnimationsHashMap, horseAnimationsHashMap,
             sheepAnimationsHashMap, goatAnimationsHashMap, goatBabyAnimationsHashMap;
 
@@ -161,14 +161,6 @@ public class Animal {
         }
     }
 
-    public void setAnimalXVel(int animalXVel) {
-        this.animalXVel = animalXVel;
-    }
-
-    public void setAnimalYVel(int animalYVel) {
-        this.animalYVel = animalYVel;
-    }
-
     public void pauseMove() {
         pause = true;
     }
@@ -192,8 +184,16 @@ public class Animal {
         return animalXVel;
     }
 
+    public void setAnimalXVel(int animalXVel) {
+        this.animalXVel = animalXVel;
+    }
+
     public int getAnimalYVel() {
         return animalYVel;
+    }
+
+    public void setAnimalYVel(int animalYVel) {
+        this.animalYVel = animalYVel;
     }
 
     public int getAnimalX() {
