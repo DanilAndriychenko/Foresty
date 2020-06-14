@@ -38,16 +38,17 @@ public class LevelsScreen extends ScreenAdapter {
             rectFifthFarm = getFarmRect(fifthFarmTexture, 5);
     private static Foresty game;
     private static LevelsCompleted level;
-    float cameraSpeed = 600;
+    private float cameraSpeed = 600;
+    private float cameraX = 0;
 
     static {
         // Add animals to levels hashMaps.
-        lvlFirstAnimalsHashMap.put(Animal.TYPES.SHEEP, 3);
+        lvlFirstAnimalsHashMap.put(Animal.TYPES.SHEEP, 1);
 
-        lvlSecondAnimalsHashMap.put(Animal.TYPES.SHEEP, 2);
-        lvlSecondAnimalsHashMap.put(Animal.TYPES.DOG, 2);
+        lvlSecondAnimalsHashMap.put(Animal.TYPES.SHEEP, 1);
+        lvlSecondAnimalsHashMap.put(Animal.TYPES.DOG, 1);
 
-        lvlThirdAnimalsHashMap.put(Animal.TYPES.SHEEP, 2);
+        lvlThirdAnimalsHashMap.put(Animal.TYPES.SHEEP, 1);
         lvlThirdAnimalsHashMap.put(Animal.TYPES.DOG, 1);
         lvlThirdAnimalsHashMap.put(Animal.TYPES.HORSE, 1);
 
@@ -74,7 +75,7 @@ public class LevelsScreen extends ScreenAdapter {
                 texture.getWidth() * INCREASE_FARM_SIZE_COEFFICIENT, texture.getHeight() * INCREASE_FARM_SIZE_COEFFICIENT);
     }
 
-    private static void handleUsersClick(int screenX, int screenY) {
+    private void handleUsersClick(int screenX, int screenY) {
         //TODO: check if clicked farm is already unlocked?
 
 //        //mouse listener for first level
@@ -92,7 +93,7 @@ public class LevelsScreen extends ScreenAdapter {
 //                && level.getNum() + 1 >= 2)
 //            game.setScreen(new GameScreen(game, lvlSecondAnimalsHashMap, 15, 30, 45, 75, LevelsCompleted.TWO));
 //
-//            //mouse listener for third level
+//        //mouse listener for third level
 //        else if (screenX >= 2 * mapBackground.getWidth() / 5 + mapBackground.getWidth() / 10 - thirdFarmTexture.getWidth() / 2
 //                && screenX <= 2 * mapBackground.getWidth() / 5 + mapBackground.getWidth() / 10 - thirdFarmTexture.getWidth() / 2 + 2 * thirdFarmTexture.getWidth()
 //                && (Gdx.graphics.getHeight() - screenY) >= mapBackground.getHeight() / 2 - thirdFarmTexture.getHeight() / 2
@@ -117,16 +118,17 @@ public class LevelsScreen extends ScreenAdapter {
 //            game.setScreen(new GameScreen(game, lvlFifthAnimalsHashMap, 15, 30, 45, 75, LevelsCompleted.FIVE));
 
         //TODO: this should work clearer, TEST
-        if (rectFirstFarm.contains(screenX, screenY))
+        if (rectFirstFarm.contains(screenX+cameraX, screenY))
             game.setScreen(new GameScreen(game, lvlFirstAnimalsHashMap, 15, 30, 45, 75, LevelsCompleted.ONE));
-        else if (rectSecondFarm.contains(screenX, screenY))
+        else if (rectSecondFarm.contains(screenX+cameraX, screenY))
             game.setScreen(new GameScreen(game, lvlSecondAnimalsHashMap, 15, 30, 45, 75, LevelsCompleted.TWO));
-        else if (rectThirdFarm.contains(screenX, screenY))
+        else if (rectThirdFarm.contains(screenX+cameraX, screenY))
             game.setScreen(new GameScreen(game, lvlThirdAnimalsHashMap, 15, 30, 45, 75, LevelsCompleted.THREE));
-        else if (rectFourthFarm.contains(screenX, screenY))
+        else if (rectFourthFarm.contains(screenX+cameraX, screenY))
             game.setScreen(new GameScreen(game, lvlFourthAnimalsHashMap, 15, 30, 45, 75, LevelsCompleted.FOUR));
-        else if (rectFifthFarm.contains(screenX, screenY))
+        else if (rectFifthFarm.contains(screenX+cameraX, screenY))
             game.setScreen(new GameScreen(game, lvlFifthAnimalsHashMap, 15, 30, 45, 75, LevelsCompleted.FIVE));
+        System.out.println("screenX: " + screenX + ", screenY: " + screenY + ", cameraX+screenX: " + cameraX+screenX);
     }
 
     @Override
@@ -150,8 +152,10 @@ public class LevelsScreen extends ScreenAdapter {
     public void render(float data) {
         if (Gdx.input.isKeyPressed(Input.Keys.D) && camera.position.x < mapBackground.getWidth() - Gdx.graphics.getWidth() / 2 - 30) {
             camera.translate(cameraSpeed * Gdx.graphics.getDeltaTime(), 0);
+            cameraX+=cameraSpeed*Gdx.graphics.getDeltaTime();
         } else if (Gdx.input.isKeyPressed(Input.Keys.A) && camera.position.x > Gdx.graphics.getWidth() / 2 + 30) {
             camera.translate(-cameraSpeed * Gdx.graphics.getDeltaTime(), 0);
+            cameraX-=cameraSpeed*Gdx.graphics.getDeltaTime();
         }
 
         Gdx.gl.glClearColor(.25f, .25f, .25f, 1);

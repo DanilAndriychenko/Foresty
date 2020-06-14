@@ -183,8 +183,8 @@ public class Animal {
 
     protected void setRandomLocation() {
         do {
-            animalX = ThreadLocalRandom.current().nextInt(RECT_SIZE, Gdx.graphics.getWidth() - 2 * RECT_SIZE + 1);
-            animalY = ThreadLocalRandom.current().nextInt(RECT_SIZE, Gdx.graphics.getHeight() - 2 * RECT_SIZE + 1);
+            animalX = ThreadLocalRandom.current().nextInt(ANIMAL_SIZE, Gdx.graphics.getWidth() - 2 * ANIMAL_SIZE + 1);
+            animalY = ThreadLocalRandom.current().nextInt(ANIMAL_SIZE, Gdx.graphics.getHeight() - 2 * ANIMAL_SIZE + 1);
         } while (grid[animalY / RECT_SIZE][animalX / RECT_SIZE] != '.');
     }
 
