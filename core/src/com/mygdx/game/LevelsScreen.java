@@ -38,6 +38,7 @@ public class LevelsScreen extends ScreenAdapter {
             rectFifthFarm = getFarmRect(fifthFarmTexture, 5);
     private static Foresty game;
     private static LevelsCompleted level;
+    float cameraSpeed = 600;
 
     static {
         // Add animals to levels hashMaps.
@@ -62,8 +63,6 @@ public class LevelsScreen extends ScreenAdapter {
         lvlFifthAnimalsHashMap.put(Animal.TYPES.GOAT_BABY, 1);
     }
 
-    float moveSpeed = 600;
-
     LevelsScreen(Foresty game) {
         this.game = game;
         level = LevelsCompleted.ONE;
@@ -77,44 +76,46 @@ public class LevelsScreen extends ScreenAdapter {
 
     private static void handleUsersClick(int screenX, int screenY) {
         //TODO: check if clicked farm is already unlocked?
-        //mouse listener for first level
-        if (screenX >= mapBackground.getWidth() / 10 - firstFarmTexture.getWidth() / 2
-                && screenX <= mapBackground.getWidth() / 10 - firstFarmTexture.getWidth() / 2 + firstFarmTexture.getWidth() * 2
-                && (Gdx.graphics.getHeight() - screenY) >= mapBackground.getHeight() / 2 - firstFarmTexture.getHeight() / 2
-                && (Gdx.graphics.getHeight() - screenY) <= mapBackground.getHeight() / 2 - firstFarmTexture.getHeight() / 2 + 2 * firstFarmTexture.getHeight()) {
-            game.setScreen(new GameScreen(game, lvlFirstAnimalsHashMap, 15, 30, 45, 75, LevelsCompleted.ONE));
-        }
-        //mouse listener for second level
-        else if (screenX >= mapBackground.getWidth() / 5 + mapBackground.getWidth() / 10 - secondFarmTexture.getWidth() / 2
-                && screenX <= mapBackground.getWidth() / 5 + mapBackground.getWidth() / 10 - secondFarmTexture.getWidth() / 2 + 2 * (secondFarmTexture.getWidth())
-                && (Gdx.graphics.getHeight() - screenY) >= mapBackground.getHeight() / 2 - secondFarmTexture.getHeight() / 2
-                && (Gdx.graphics.getHeight() - screenY) <= mapBackground.getHeight() / 2 - firstFarmTexture.getHeight() / 2 + 2 * (secondFarmTexture.getHeight())
-                && level.getNum() + 1 >= 2)
-            game.setScreen(new GameScreen(game, lvlSecondAnimalsHashMap, 15, 30, 45, 75, LevelsCompleted.TWO));
 
-            //mouse listener for third level
-        else if (screenX >= 2 * mapBackground.getWidth() / 5 + mapBackground.getWidth() / 10 - thirdFarmTexture.getWidth() / 2
-                && screenX <= 2 * mapBackground.getWidth() / 5 + mapBackground.getWidth() / 10 - thirdFarmTexture.getWidth() / 2 + 2 * thirdFarmTexture.getWidth()
-                && (Gdx.graphics.getHeight() - screenY) >= mapBackground.getHeight() / 2 - thirdFarmTexture.getHeight() / 2
-                && (Gdx.graphics.getHeight() - screenY) <= mapBackground.getHeight() / 2 - firstFarmTexture.getHeight() / 2 + 2 * thirdFarmTexture.getHeight()
-                && level.getNum() + 1 >= 3)
-            game.setScreen(new GameScreen(game, lvlThirdAnimalsHashMap, 15, 30, 45, 75, LevelsCompleted.THREE));
+//        //mouse listener for first level
+//        if (screenX >= mapBackground.getWidth() / 10 - firstFarmTexture.getWidth() / 2
+//                && screenX <= mapBackground.getWidth() / 10 - firstFarmTexture.getWidth() / 2 + firstFarmTexture.getWidth() * 2
+//                && (Gdx.graphics.getHeight() - screenY) >= mapBackground.getHeight() / 2 - firstFarmTexture.getHeight() / 2
+//                && (Gdx.graphics.getHeight() - screenY) <= mapBackground.getHeight() / 2 - firstFarmTexture.getHeight() / 2 + 2 * firstFarmTexture.getHeight()) {
+//            game.setScreen(new GameScreen(game, lvlFirstAnimalsHashMap, 15, 30, 45, 75, LevelsCompleted.ONE));
+//        }
+//        //mouse listener for second level
+//        else if (screenX >= mapBackground.getWidth() / 5 + mapBackground.getWidth() / 10 - secondFarmTexture.getWidth() / 2
+//                && screenX <= mapBackground.getWidth() / 5 + mapBackground.getWidth() / 10 - secondFarmTexture.getWidth() / 2 + 2 * (secondFarmTexture.getWidth())
+//                && (Gdx.graphics.getHeight() - screenY) >= mapBackground.getHeight() / 2 - secondFarmTexture.getHeight() / 2
+//                && (Gdx.graphics.getHeight() - screenY) <= mapBackground.getHeight() / 2 - firstFarmTexture.getHeight() / 2 + 2 * (secondFarmTexture.getHeight())
+//                && level.getNum() + 1 >= 2)
+//            game.setScreen(new GameScreen(game, lvlSecondAnimalsHashMap, 15, 30, 45, 75, LevelsCompleted.TWO));
+//
+//            //mouse listener for third level
+//        else if (screenX >= 2 * mapBackground.getWidth() / 5 + mapBackground.getWidth() / 10 - thirdFarmTexture.getWidth() / 2
+//                && screenX <= 2 * mapBackground.getWidth() / 5 + mapBackground.getWidth() / 10 - thirdFarmTexture.getWidth() / 2 + 2 * thirdFarmTexture.getWidth()
+//                && (Gdx.graphics.getHeight() - screenY) >= mapBackground.getHeight() / 2 - thirdFarmTexture.getHeight() / 2
+//                && (Gdx.graphics.getHeight() - screenY) <= mapBackground.getHeight() / 2 - firstFarmTexture.getHeight() / 2 + 2 * thirdFarmTexture.getHeight()
+//                && level.getNum() + 1 >= 3)
+//            game.setScreen(new GameScreen(game, lvlThirdAnimalsHashMap, 15, 30, 45, 75, LevelsCompleted.THREE));
+//
+//            //mouse listener for fourth level
+//        else if (screenX >= 3 * mapBackground.getWidth() / 5 + mapBackground.getWidth() / 10 - fourthFarmTexture.getWidth() / 2
+//                && screenX <= 3 * mapBackground.getWidth() / 5 + mapBackground.getWidth() / 10 - fourthFarmTexture.getWidth() / 2 + 2 * fourthFarmTexture.getWidth()
+//                && (Gdx.graphics.getHeight() - screenY) >= mapBackground.getHeight() / 2 - fourthFarmTexture.getHeight() / 2
+//                && (Gdx.graphics.getHeight() - screenY) <= mapBackground.getHeight() / 2 - fourthFarmTexture.getHeight() / 2 + 2 * fourthFarmTexture.getHeight()
+//                && level.getNum() + 1 >= 4)
+//            game.setScreen(new GameScreen(game, lvlFourthAnimalsHashMap, 15, 30, 45, 75, LevelsCompleted.FOUR));
+//
+//            //mouse listener for fifth level
+//        else if (screenX >= 4 * mapBackground.getWidth() / 5 + mapBackground.getWidth() / 10 - fifthFarmTexture.getWidth() / 2
+//                && screenX <= 4 * mapBackground.getWidth() / 5 + mapBackground.getWidth() / 10 - fifthFarmTexture.getWidth() / 2 + 2 * fifthFarmTexture.getWidth()
+//                && (Gdx.graphics.getHeight() - screenY) >= mapBackground.getHeight() / 2 - fifthFarmTexture.getHeight() / 2
+//                && (Gdx.graphics.getHeight() - screenY) <= mapBackground.getHeight() / 2 - fifthFarmTexture.getHeight() / 2 + 2 * fifthFarmTexture.getHeight()
+//                && level.getNum() + 1 >= 5)
+//            game.setScreen(new GameScreen(game, lvlFifthAnimalsHashMap, 15, 30, 45, 75, LevelsCompleted.FIVE));
 
-            //mouse listener for fourth level
-        else if (screenX >= 3 * mapBackground.getWidth() / 5 + mapBackground.getWidth() / 10 - fourthFarmTexture.getWidth() / 2
-                && screenX <= 3 * mapBackground.getWidth() / 5 + mapBackground.getWidth() / 10 - fourthFarmTexture.getWidth() / 2 + 2 * fourthFarmTexture.getWidth()
-                && (Gdx.graphics.getHeight() - screenY) >= mapBackground.getHeight() / 2 - fourthFarmTexture.getHeight() / 2
-                && (Gdx.graphics.getHeight() - screenY) <= mapBackground.getHeight() / 2 - fourthFarmTexture.getHeight() / 2 + 2 * fourthFarmTexture.getHeight()
-                && level.getNum() + 1 >= 4)
-            game.setScreen(new GameScreen(game, lvlFourthAnimalsHashMap, 15, 30, 45, 75, LevelsCompleted.FOUR));
-
-            //mouse listener for fifth level
-        else if (screenX >= 4 * mapBackground.getWidth() / 5 + mapBackground.getWidth() / 10 - fifthFarmTexture.getWidth() / 2
-                && screenX <= 4 * mapBackground.getWidth() / 5 + mapBackground.getWidth() / 10 - fifthFarmTexture.getWidth() / 2 + 2 * fifthFarmTexture.getWidth()
-                && (Gdx.graphics.getHeight() - screenY) >= mapBackground.getHeight() / 2 - fifthFarmTexture.getHeight() / 2
-                && (Gdx.graphics.getHeight() - screenY) <= mapBackground.getHeight() / 2 - fifthFarmTexture.getHeight() / 2 + 2 * fifthFarmTexture.getHeight()
-                && level.getNum() + 1 >= 5)
-            game.setScreen(new GameScreen(game, lvlFifthAnimalsHashMap, 15, 30, 45, 75, LevelsCompleted.FIVE));
         //TODO: this should work clearer, TEST
         if (rectFirstFarm.contains(screenX, screenY))
             game.setScreen(new GameScreen(game, lvlFirstAnimalsHashMap, 15, 30, 45, 75, LevelsCompleted.ONE));
@@ -148,9 +149,9 @@ public class LevelsScreen extends ScreenAdapter {
     @Override
     public void render(float data) {
         if (Gdx.input.isKeyPressed(Input.Keys.D) && camera.position.x < mapBackground.getWidth() - Gdx.graphics.getWidth() / 2 - 30) {
-            camera.translate(moveSpeed * Gdx.graphics.getDeltaTime(), 0);
+            camera.translate(cameraSpeed * Gdx.graphics.getDeltaTime(), 0);
         } else if (Gdx.input.isKeyPressed(Input.Keys.A) && camera.position.x > Gdx.graphics.getWidth() / 2 + 30) {
-            camera.translate(-moveSpeed * Gdx.graphics.getDeltaTime(), 0);
+            camera.translate(-cameraSpeed * Gdx.graphics.getDeltaTime(), 0);
         }
 
         Gdx.gl.glClearColor(.25f, .25f, .25f, 1);

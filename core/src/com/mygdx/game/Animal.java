@@ -5,8 +5,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Circle;
-import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 
 import java.awt.*;
@@ -18,21 +16,22 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Animal {
     private static final float FRAME_DURATION = 0.025f;
-    protected static int RECT_SIZE = 32;
+    protected static int ANIMAL_SIZE = 32,
+        RECT_SIZE = 16;
     private static HashMap<String, Animation<TextureRegion>> rabbitAnimationsHashMap, horseAnimationsHashMap,
             sheepAnimationsHashMap, goatAnimationsHashMap, goatBabyAnimationsHashMap;
 
     static {
         rabbitAnimationsHashMap = fillAnimationHashMap("PC Computer - Stardew Valley - Dog Blonde.png",
-                32, 32, 4, 4, 6, false);
+                ANIMAL_SIZE, ANIMAL_SIZE, 4, 4, 6, false);
         horseAnimationsHashMap = fillAnimationHashMap("PC Computer - Stardew Valley - Horse.png",
-                32, 32, 7, 4, 3, true);
+                ANIMAL_SIZE, ANIMAL_SIZE, 7, 4, 3, true);
         sheepAnimationsHashMap = fillAnimationHashMap("PC Computer - Stardew Valley - Sheep.png",
-                32, 32, 4, 4, 4, true);
+                ANIMAL_SIZE, ANIMAL_SIZE, 4, 4, 4, true);
         goatAnimationsHashMap = fillAnimationHashMap("PC Computer - Stardew Valley - Goat.png",
-                32, 32, 4, 4, 4, true);
+                ANIMAL_SIZE, ANIMAL_SIZE, 4, 4, 4, true);
         goatBabyAnimationsHashMap = fillAnimationHashMap("PC Computer - Stardew Valley - Goat Baby.png",
-                32, 32, 4, 4, 4, true);
+                ANIMAL_SIZE, ANIMAL_SIZE, 4, 4, 4, true);
     }
 
     protected HashMap<String, Animation<TextureRegion>> stringAnimationHashMap;
@@ -151,13 +150,13 @@ public class Animal {
             elapsedTime += Gdx.graphics.getDeltaTime();
             spriteBatch.begin();
             if (animalXVel > 0 && animalYVel > 0)
-                spriteBatch.draw(stringAnimationHashMap.get("north").getKeyFrame(elapsedTime, true), animalX, animalY, RECT_SIZE, RECT_SIZE);
+                spriteBatch.draw(stringAnimationHashMap.get("north").getKeyFrame(elapsedTime, true), animalX, animalY, ANIMAL_SIZE, ANIMAL_SIZE);
             else if (animalXVel > 0 && animalYVel < 0)
-                spriteBatch.draw(stringAnimationHashMap.get("east").getKeyFrame(elapsedTime, true), animalX, animalY, RECT_SIZE, RECT_SIZE);
+                spriteBatch.draw(stringAnimationHashMap.get("east").getKeyFrame(elapsedTime, true), animalX, animalY, ANIMAL_SIZE, ANIMAL_SIZE);
             else if (animalXVel < 0 && animalYVel > 0)
-                spriteBatch.draw(stringAnimationHashMap.get("west").getKeyFrame(elapsedTime, true), animalX, animalY, RECT_SIZE, RECT_SIZE);
+                spriteBatch.draw(stringAnimationHashMap.get("west").getKeyFrame(elapsedTime, true), animalX, animalY, ANIMAL_SIZE, ANIMAL_SIZE);
             else if (animalXVel < 0 && animalYVel < 0)
-                spriteBatch.draw(stringAnimationHashMap.get("south").getKeyFrame(elapsedTime, true), animalX, animalY, RECT_SIZE, RECT_SIZE);
+                spriteBatch.draw(stringAnimationHashMap.get("south").getKeyFrame(elapsedTime, true), animalX, animalY, ANIMAL_SIZE, ANIMAL_SIZE);
             spriteBatch.end();
         }
     }
@@ -206,10 +205,10 @@ public class Animal {
     }
 
     private void reflectFromTheBorderIfNeeded() {
-        Rectangle animalRectWest = new Rectangle(animalX - animalXVel, animalY, RECT_SIZE, RECT_SIZE);
-        Rectangle animalRectNorth = new Rectangle(animalX, animalY + animalYVel, RECT_SIZE, RECT_SIZE);
-        Rectangle animalRectEast = new Rectangle(animalX + animalXVel, animalY, RECT_SIZE, RECT_SIZE);
-        Rectangle animalRectSouth = new Rectangle(animalX, animalY - animalYVel, RECT_SIZE, RECT_SIZE);
+        Rectangle animalRectWest = new Rectangle(animalX - animalXVel, animalY, ANIMAL_SIZE, ANIMAL_SIZE);
+        Rectangle animalRectNorth = new Rectangle(animalX, animalY + animalYVel, ANIMAL_SIZE, ANIMAL_SIZE);
+        Rectangle animalRectEast = new Rectangle(animalX + animalXVel, animalY, ANIMAL_SIZE, ANIMAL_SIZE);
+        Rectangle animalRectSouth = new Rectangle(animalX, animalY - animalYVel, ANIMAL_SIZE, ANIMAL_SIZE);
         Iterator<Point> pointIterator = borderPoints.iterator();
         Point point;
         boolean reflectX = false, reflectY = false;
@@ -251,7 +250,7 @@ public class Animal {
         Iterator<Point> iterator = tracePoints.iterator();
         Point point;
         Rectangle traceRect, animalRect;
-        animalRect = new Rectangle(animalX, animalY, RECT_SIZE, RECT_SIZE);
+        animalRect = new Rectangle(animalX, animalY, ANIMAL_SIZE, ANIMAL_SIZE);
         while (iterator.hasNext()) {
             point = iterator.next();
             traceRect = new Rectangle(point.x, point.y, RECT_SIZE, RECT_SIZE);
@@ -263,7 +262,7 @@ public class Animal {
     }
 
     public boolean animalCaught() {
-        if (grid[animalY / RECT_SIZE * 2][animalX / RECT_SIZE * 2] == 'C' || grid[animalY / RECT_SIZE * 2][animalX / RECT_SIZE * 2] == 'B')
+        if (grid[animalY / RECT_SIZE][animalX / RECT_SIZE] == 'C' || grid[animalY / RECT_SIZE][animalX / RECT_SIZE] == 'B')
             return true;
         else return false;
     }

@@ -117,7 +117,6 @@ public class GameScreen extends ScreenAdapter {
         lose = false;
         invokeLaterKey = -1;
         invokeLaterTimer = 0;
-//        animal = new Animal(rabbitTexture, RECT_SIZE, 2, 5, grid, spriteBatch, borderPoints,  tracePoints);
         animals = new ArrayList<>();
         for (Map.Entry<Animal.TYPES, Integer> entry : typesIntegerHashMap.entrySet()) {
             for (int i = 0; i < entry.getValue(); i++) {
