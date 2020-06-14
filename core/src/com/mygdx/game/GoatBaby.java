@@ -25,14 +25,14 @@ public class GoatBaby extends Animal {
         if (this.animalCaught()) {
             uncaught = false;
             for (Animal animal : uncaughtAnimals) {
-                if (animal.animalCaught() && animal != this)
+                if (animal.animalCaught() && animal != this){
+                    super.moveAndDrawAnimal();
                     return;
+                }
             }
             gameScreen.setLose(true);
         }
-        {
-            super.moveAndDrawAnimal();
-        }
+        super.moveAndDrawAnimal();
         if (uncaught) {
             uncaughtAnimals.clear();
             for (Animal animal : gameScreen.animals) {
