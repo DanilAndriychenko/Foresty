@@ -17,18 +17,11 @@ public class Goat extends Animal {
         this.contentPoints = contentPoints;
     }
 
-    public void printContentPoints(){
-        for(Point point : contentPoints.keySet()){
-            System.out.println(point.getX() + ", " + point.getY());
-        }
-    }
-
 
     @Override
     public void moveAndDrawAnimal() {
         //TODO make goat destroy field after being caught
         if (this.animalCaught()) {
-            printContentPoints();
             System.out.println("caught");
             int animalCurrGridX = (int) this.getAnimalX() / RECT_SIZE + 1;
             int animalCurrGridY = (int) this.getAnimalY() / RECT_SIZE + 1;
@@ -57,7 +50,7 @@ public class Goat extends Animal {
                 }
             }
         }
-        {
+        else {
             super.moveAndDrawAnimal();
         }
     }

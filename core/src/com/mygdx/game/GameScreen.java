@@ -20,7 +20,7 @@ public class GameScreen extends ScreenAdapter {
     private static final double BLUE_FLOWER_TEXTURE_PROBABILITY = 0.02;
     private static final double ROCKS_TEXTURE_PROBABILITY = 0.02;
     private static final int NUM_OF_RENDERS_OF_SLOWING_DOWN = 500;
-    private static final int REDUCTION_OF_SPEED_WHILE_SLOWING_DOWN = 2;
+    private static final int REDUCTION_OF_SPEED_WHILE_SLOWING_DOWN = 1;
     private static final Random random = new Random();
     private final Foresty game;
     private final int secForOneStar;
@@ -109,7 +109,6 @@ public class GameScreen extends ScreenAdapter {
         lastPressedKey = Input.Keys.W;
         currPoint = new Point(currX, currY);
         prevPoint = null;
-        random = new Random();
         shiftAfterTurn = 0;
         turnedBefore = false;
         pause = false;
@@ -120,8 +119,15 @@ public class GameScreen extends ScreenAdapter {
         animals = new ArrayList<>();
         for (Map.Entry<Animal.TYPES, Integer> entry : typesIntegerHashMap.entrySet()) {
             for (int i = 0; i < entry.getValue(); i++) {
-                animals.add(new Animal(entry.getKey().getStringAnimationHashMap(), entry.getKey().getAnimalXVel(), entry.getKey().getAnimalYVel(), grid, spriteBatch, borderPoints, tracePoints));
-            }
+                if(entry.getKey() == Animal.TYPES.DOG){
+                    animals.add(new Dog(grid, spriteBatch, borderPoints, tracePoints, this));
+                }else if(entry.getKey() == Animal.TYPES.HORSE){
+                    animals.add(new Horse(grid, spriteBatch, borderPoints, tracePoints, this));
+                }else if(entry.getKey() == Animal.TYPES.GOAT){
+                    animals.add(new Goat(grid, spriteBatch, borderPoints, tracePoints, contentPoints));
+                }
+            /*    animals.add(new Animal(entry.getKey().getStringAnimationHashMap(), entry.getKey().getAnimalXVel(), entry.getKey().getAnimalYVel(), grid, spriteBatch, borderPoints, tracePoints));
+            */}
         }
 
         Gdx.input.setInputProcessor(new InputAdapter() {

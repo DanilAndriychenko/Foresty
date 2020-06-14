@@ -269,8 +269,8 @@ public class Animal {
     }
 
     public enum TYPES {
-        DOG(rabbitAnimationsHashMap, 2, 2),
-        HORSE(horseAnimationsHashMap, 4, 3),
+        DOG(rabbitAnimationsHashMap, 3, 3),
+        HORSE(horseAnimationsHashMap, 2, 2),
         SHEEP(sheepAnimationsHashMap, 2, 2),
         GOAT(goatAnimationsHashMap, 2, 2),
         GOAT_BABY(goatBabyAnimationsHashMap, 2, 2);

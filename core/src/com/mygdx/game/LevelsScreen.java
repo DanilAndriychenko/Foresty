@@ -41,7 +41,9 @@ public class LevelsScreen extends ScreenAdapter {
 
     static {
         // Add animals to levels hashMaps.
-        lvlFirstAnimalsHashMap.put(Animal.TYPES.SHEEP, 3);
+        lvlFirstAnimalsHashMap.put(Animal.TYPES.HORSE, 3);
+        lvlFirstAnimalsHashMap.put(Animal.TYPES.DOG, 1);
+        lvlFirstAnimalsHashMap.put(Animal.TYPES.GOAT, 1);
 
         lvlSecondAnimalsHashMap.put(Animal.TYPES.SHEEP, 2);
         lvlSecondAnimalsHashMap.put(Animal.TYPES.DOG, 2);
@@ -66,7 +68,7 @@ public class LevelsScreen extends ScreenAdapter {
 
     LevelsScreen(Foresty game) {
         this.game = game;
-        level = LevelsCompleted.THREE;
+        level = LevelsCompleted.ONE;
     }
 
     private static Rectangle getFarmRect(Texture texture, int numInRow) {
@@ -230,7 +232,7 @@ public class LevelsScreen extends ScreenAdapter {
     }
 
     enum LevelsCompleted {
-        ZERO(0, 3), ONE(1, 2), TWO(2, 1), THREE(3, 0), FOUR(4, 0), FIVE(5, 0);
+        ZERO(0, 0), ONE(1, 0), TWO(2, 0), THREE(3, 0), FOUR(4, 0), FIVE(5, 0);
         private int num;
         private int numOfStars;
 
