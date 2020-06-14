@@ -173,8 +173,6 @@ public class GameScreen extends ScreenAdapter {
                             game.setScreen(new GameScreen(game, LevelsScreen.lvlFourthAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.FOUR));
                         else if (currentLevel == LevelsScreen.LevelsCompleted.FOUR)
                             game.setScreen(new GameScreen(game, LevelsScreen.lvlFifthAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.FIVE));
-                        //else if (currentLevel == LevelsScreen.LevelsCompleted.FIVE)
-                        //game.setScreen(LevelsScreen.fifthLevelScreen);
                     }
                 } else if(win && currentLevel.getNum() == 5){
                     Circle home = new Circle(434, Gdx.graphics.getHeight() - 458, 40);

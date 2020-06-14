@@ -8,10 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 
 import java.awt.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Animal {
@@ -66,6 +63,12 @@ public class Animal {
         this.spriteBatch = spriteBatch;
         this.borderPoints = borderPoints;
         this.tracePoints = tracePoints;
+        if(new Random().nextBoolean()){
+            this.animalXVel *= -1;
+        }
+        if(new Random().nextBoolean()){
+            this.animalYVel *= -1;
+        }
     }
 
     /**
@@ -83,6 +86,12 @@ public class Animal {
         this.animalYVel = animalYVel;
         this.animalX = animalX;
         this.animalY = animalY;
+        if(new Random().nextBoolean()){
+            animalXVel = -animalXVel;
+        }
+        if(new Random().nextBoolean()){
+            animalYVel *= -animalYVel;
+        }
         this.grid = grid;
         if (grid[animalY / RECT_SIZE][animalX / RECT_SIZE] != '.') setRandomLocation();
         this.spriteBatch = spriteBatch;
