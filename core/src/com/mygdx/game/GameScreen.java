@@ -31,6 +31,7 @@ public class GameScreen extends ScreenAdapter {
     public ArrayList<Animal> animals;
     public char[][] grid;
     int rows, columns;
+    int gameTime;
     int lastPressedKey;
     boolean clockwise;
     private int timeElapsedFromTheSlowDown = 0;
@@ -46,7 +47,7 @@ public class GameScreen extends ScreenAdapter {
     boolean turnedBefore;
     private LevelsScreen.LevelsCompleted currentLevel;
     private HashMap<Animal.TYPES, Integer> typesIntegerHashMap;
-    private Texture winScreenTheeStars, winScreenTwoStars, winScreenOneStars, gameOverScreen;
+    private Texture winScreenTheeStars, winScreenTwoStars, winScreenOneStars, gameOverScreen, winScreenZeroStars;
     private int currX, currY;
     private Point currPoint, prevPoint;
     private int shiftAfterTurn;
@@ -77,10 +78,11 @@ public class GameScreen extends ScreenAdapter {
         rocksOnSand = new Texture(Gdx.files.internal("rocksOnSand.png"));
         grassOnSand = new Texture(Gdx.files.internal("grassOnSand.png"));
         rabbitTexture = new Texture(Gdx.files.internal("rabbit.gif"));
-        winScreenTheeStars = new Texture(Gdx.files.internal("win3stars.png"));
-        winScreenOneStars = new Texture(Gdx.files.internal("win1stars.png"));
-        winScreenTwoStars = new Texture(Gdx.files.internal("win2stars.png"));
-        gameOverScreen = new Texture(Gdx.files.internal("gameover.png"));
+        winScreenTheeStars = new Texture(Gdx.files.internal("finishLevel\\completedThree.png"));
+        winScreenOneStars = new Texture(Gdx.files.internal("finishLevel\\completedOne.png"));
+        winScreenTwoStars = new Texture(Gdx.files.internal("finishLevel\\completedTwo.png"));
+        winScreenZeroStars = new Texture(Gdx.files.internal("finishLevel\\completedZero.png"));
+        gameOverScreen = new Texture(Gdx.files.internal("finishLevel\\failed.png"));
         pauseTexture = new Texture(Gdx.files.internal("pause.png"));
         shapeRenderer = new ShapeRenderer();
         tracePoints = new LinkedHashSet<>();
@@ -155,8 +157,6 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void render(float data) {
-
-
 //        Pause game if space pressed on first time and resume on second press.
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             if (pause) pause = false;
@@ -210,15 +210,14 @@ public class GameScreen extends ScreenAdapter {
 
             checkForWin();
             if (win) {
-                if(currentLevel.getNumOfStars() == 3)
+                if(gameTime <= secForThreeStars)
                     showGameEndScreen(winScreenTheeStars);
-                else if(currentLevel.getNumOfStars() == 2)
+                else if(gameTime <= secForTwoStars)
                     showGameEndScreen(winScreenTwoStars);
-                else if(currentLevel.getNumOfStars() == 1)
+                else if(gameTime <= secForOneStar)
                     showGameEndScreen(winScreenTheeStars);
-                else if(currentLevel.getNumOfStars() == 0)
-                    showGameEndScreen(winScreenTwoStars);
-                    //TODO create win screen with 0 star
+                else
+                    showGameEndScreen(winScreenZeroStars);
                 return;
             }
 
@@ -590,7 +589,7 @@ public class GameScreen extends ScreenAdapter {
                 win = true;
                 game.levelsScreen.levelCompleted();
 
-                int gameTime = (int) (System.currentTimeMillis() - startTimeInMilliseconds) / 1000;
+                gameTime = (int) (System.currentTimeMillis() - startTimeInMilliseconds) / 1000;
                 System.out.println(gameTime);
                 if (gameTime <= secForThreeStars) {
                     showGameEndScreen(winScreenTheeStars);
