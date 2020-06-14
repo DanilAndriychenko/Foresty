@@ -78,6 +78,8 @@ public class GameScreen extends ScreenAdapter {
         grassOnSand = new Texture(Gdx.files.internal("grassOnSand.png"));
         rabbitTexture = new Texture(Gdx.files.internal("rabbit.gif"));
         winScreenTheeStars = new Texture(Gdx.files.internal("win3stars.png"));
+        winScreenOneStars = new Texture(Gdx.files.internal("win1stars.png"));
+        winScreenTwoStars = new Texture(Gdx.files.internal("win2stars.png"));
         gameOverScreen = new Texture(Gdx.files.internal("gameover.png"));
         pauseTexture = new Texture(Gdx.files.internal("pause.png"));
         shapeRenderer = new ShapeRenderer();
@@ -159,7 +161,7 @@ public class GameScreen extends ScreenAdapter {
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             if (pause) pause = false;
             else pause = true;
-        }if(!pause) {
+        }if(!pause && !win && !lose) {
 //        Determine if user press one of the following keys.
             ifKeyRecentlyPressed();
 //        Move tile every render.
@@ -192,43 +194,39 @@ public class GameScreen extends ScreenAdapter {
             } while (pointIterator.hasNext());
 //        And the last one, draw head tile.
             spriteBatch.draw(headTexture, this.currPoint.x, this.currPoint.y, RECT_SIZE, RECT_SIZE);
-//        Close batch.
             spriteBatch.end();
 //        Draw animal.
             for (Animal animal : animals) {
                 if (!animal.isMovePaused()) animal.moveAndDrawAnimal();
             }
+
+
+            if(pause){
+                spriteBatch.begin();
+                spriteBatch.draw(pauseTexture, Gdx.graphics.getWidth()/2 - pauseTexture.getWidth()/2, Gdx.graphics.getHeight()/2 - pauseTexture.getHeight()/2);
+                spriteBatch.end();
+                return;
+            }
+
             checkForWin();
             if (win) {
-                game.levelsScreen.levelCompleted();
-                int gameTime = (int) (System.currentTimeMillis() - startTimeInMilliseconds) / 1000;
-                if (gameTime <= secForThreeStars) {
+                if(currentLevel.getNumOfStars() == 3)
                     showGameEndScreen(winScreenTheeStars);
-                    currentLevel.setNumOfStars(3);
-                } else if (gameTime <= secForTwoStars) {
+                else if(currentLevel.getNumOfStars() == 2)
                     showGameEndScreen(winScreenTwoStars);
-                    if (currentLevel.getNumOfStars() < 2)
-                        currentLevel.setNumOfStars(2);
-                } else if (gameTime <= secForThreeStars) {
+                else if(currentLevel.getNumOfStars() == 1)
                     showGameEndScreen(winScreenTheeStars);
-                    if (currentLevel.getNumOfStars() < 1)
-                        currentLevel.setNumOfStars(1);
-                } else {
-                    //TODO create win screen with 0 stars
-                    showGameEndScreen(winScreenTheeStars);
-                    currentLevel.setNumOfStars(0);
-                }
+                else if(currentLevel.getNumOfStars() == 0)
+                    showGameEndScreen(winScreenTwoStars);
+                    //TODO create win screen with 0 star
+                return;
+            }
 
-            }
+
             checkForLose();
-            if (lose) {
-                pause();
+            if (lose)
                 showGameEndScreen(gameOverScreen);
-            }
-        } else if(pause){
-            spriteBatch.begin();
-            spriteBatch.draw(pauseTexture, Gdx.graphics.getWidth()/2 - pauseTexture.getWidth()/2, Gdx.graphics.getHeight()/2 - pauseTexture.getHeight()/2);
-            spriteBatch.end();
+
         }
     }
 
@@ -565,7 +563,15 @@ public class GameScreen extends ScreenAdapter {
         return grassOnSand;
     }
 
-    private void checkForWin() {
+    private boolean allAnimalsAreCaught(){
+        for (Animal animal : animals) {
+            if (!animal.animalCaught()) {
+                return false;
+            }
+        }return true;
+    }
+
+    private boolean fieldIsFilled(){
         double currFillCells = 0, totalCells = (rows - 2) * (columns - 2);
         for (int i = 1; i < rows - 1; i++) {
             for (int j = 1; j < columns - 1; j++) {
@@ -573,25 +579,45 @@ public class GameScreen extends ScreenAdapter {
             }
         }
         if (((int) ((currFillCells * 100) / totalCells)) >= percOfFillForWin) {
-            win = true;
-            return;
+            return true;
         }
-        for (Animal animal : animals) {
-            if (!animal.animalCaught()) {
-                win = false;
-                return;
+        return false;
+    }
+
+    private void checkForWin() {
+        if (!win) {
+            if(allAnimalsAreCaught() || fieldIsFilled()) {
+                win = true;
+                game.levelsScreen.levelCompleted();
+
+                int gameTime = (int) (System.currentTimeMillis() - startTimeInMilliseconds) / 1000;
+                System.out.println(gameTime);
+                if (gameTime <= secForThreeStars) {
+                    showGameEndScreen(winScreenTheeStars);
+                    currentLevel.setNumOfStars(3);
+                } else if (gameTime <= secForTwoStars) {
+                    showGameEndScreen(winScreenTwoStars);
+                    if (currentLevel.getNumOfStars() < 2)
+                        currentLevel.setNumOfStars(2);
+                } else if (gameTime <= secForOneStar) {
+                    showGameEndScreen(winScreenTheeStars);
+                    if (currentLevel.getNumOfStars() < 1)
+                        currentLevel.setNumOfStars(1);
+                } else {
+                    //TODO create win screen with 0 stars
+                    showGameEndScreen(winScreenTheeStars);
+                    currentLevel.setNumOfStars(0);
+                }
             }
         }
-        win = true;
     }
 
     private void checkForLose() {
-        for (Animal animal : animals) {
-            if (animal.crossesLine()) {
-                lose = true;
-                pause();
+            for (Animal animal : animals) {
+                if (animal.crossesLine()) {
+                    lose = true;
+                }
             }
-        }
     }
 
     public void slowDownAnimals() {
