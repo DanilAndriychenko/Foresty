@@ -50,25 +50,25 @@ public class LevelsScreen extends ScreenAdapter {
 
     static {
         // Add animals to levels hashMaps.
-        lvlFirstAnimalsHashMap.put(Animal.TYPES.SHEEP, 1);
+        lvlFirstAnimalsHashMap.put(Animal.TYPES.SHEEP, 3);
 
-        lvlSecondAnimalsHashMap.put(Animal.TYPES.SHEEP, 1);
+        lvlSecondAnimalsHashMap.put(Animal.TYPES.SHEEP, 3);
         lvlSecondAnimalsHashMap.put(Animal.TYPES.HORSE, 1);
 
-        lvlThirdAnimalsHashMap.put(Animal.TYPES.SHEEP, 1);
-        lvlThirdAnimalsHashMap.put(Animal.TYPES.GOAT, 1);
+        lvlThirdAnimalsHashMap.put(Animal.TYPES.SHEEP, 2);
         lvlThirdAnimalsHashMap.put(Animal.TYPES.HORSE, 1);
+        lvlThirdAnimalsHashMap.put(Animal.TYPES.DOG, 1);
 
         lvlFourthAnimalsHashMap.put(Animal.TYPES.SHEEP, 1);
-        lvlFourthAnimalsHashMap.put(Animal.TYPES.DOG, 1);
         lvlFourthAnimalsHashMap.put(Animal.TYPES.HORSE, 1);
-        lvlFourthAnimalsHashMap.put(Animal.TYPES.GOAT, 1);
+        lvlFourthAnimalsHashMap.put(Animal.TYPES.DOG, 1);
+        lvlFourthAnimalsHashMap.put(Animal.TYPES.GOAT, 2);
 
         lvlFifthAnimalsHashMap.put(Animal.TYPES.SHEEP, 1);
-        lvlFifthAnimalsHashMap.put(Animal.TYPES.DOG, 1);
         lvlFifthAnimalsHashMap.put(Animal.TYPES.HORSE, 1);
+        lvlFifthAnimalsHashMap.put(Animal.TYPES.DOG, 1);
         lvlFifthAnimalsHashMap.put(Animal.TYPES.GOAT, 1);
-        lvlFifthAnimalsHashMap.put(Animal.TYPES.GOAT_BABY, 1);
+        lvlFifthAnimalsHashMap.put(Animal.TYPES.GOAT_BABY, 2);
     }
 
 

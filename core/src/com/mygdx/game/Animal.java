@@ -54,7 +54,7 @@ public class Animal {
      * @param animalXVel
      * @param animalYVel
      */
-    public Animal(HashMap<String, Animation<TextureRegion>> stringAnimationHashMap, int animalXVel, int animalYVel, char[][] grid, SpriteBatch spriteBatch, HashSet<Point> borderPoints, LinkedHashSet<Point> tracePoints) {
+    public Animal(HashMap<String, Animation<TextureRegion>> stringAnimationHashMap, double animalXVel, double animalYVel, char[][] grid, SpriteBatch spriteBatch, HashSet<Point> borderPoints, LinkedHashSet<Point> tracePoints) {
         this.stringAnimationHashMap = stringAnimationHashMap;
         this.animalXVel = animalXVel;
         this.animalYVel = animalYVel;
@@ -209,7 +209,7 @@ public class Animal {
         return animalYVel;
     }
 
-    public void setAnimalYVel(int animalYVel) {
+    public void setAnimalYVel(double animalYVel) {
         this.animalYVel = animalYVel;
     }
 
@@ -265,16 +265,16 @@ public class Animal {
     }
 
     public enum TYPES {
-        DOG(rabbitAnimationsHashMap, 3, 3),
-        HORSE(horseAnimationsHashMap, 2, 2),
-        SHEEP(sheepAnimationsHashMap, 2, 2),
-        GOAT(goatAnimationsHashMap, 2, 2),
-        GOAT_BABY(goatBabyAnimationsHashMap, 2, 2);
+        DOG(rabbitAnimationsHashMap, 2.5, 3),
+        HORSE(horseAnimationsHashMap, 2.5, 2),
+        SHEEP(sheepAnimationsHashMap, 1.5, 2.5),
+        GOAT(goatAnimationsHashMap, 2, 1.5),
+        GOAT_BABY(goatBabyAnimationsHashMap, 1.5, 1.5);
 
         private HashMap<String, Animation<TextureRegion>> stringAnimationHashMap;
-        private int animalXVel, animalYVel;
+        private double animalXVel, animalYVel;
 
-        TYPES(HashMap<String, Animation<TextureRegion>> stringAnimationHashMap, int animalXVel, int animalYVel) {
+        TYPES(HashMap<String, Animation<TextureRegion>> stringAnimationHashMap, double animalXVel, double animalYVel) {
             this.stringAnimationHashMap = stringAnimationHashMap;
             this.animalXVel = animalXVel;
             this.animalYVel = animalYVel;
@@ -284,11 +284,11 @@ public class Animal {
             return stringAnimationHashMap;
         }
 
-        public int getAnimalYVel() {
+        public double getAnimalYVel() {
             return animalYVel;
         }
 
-        public int getAnimalXVel() {
+        public double getAnimalXVel() {
             return animalXVel;
         }
     }

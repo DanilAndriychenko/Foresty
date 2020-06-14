@@ -12,6 +12,7 @@ public class DesktopLauncher {
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
         config.height = 720;
         config.width = 960;
+        config.resizable = false;
 
         //Launch game.
         new LwjglApplication(new Foresty(), config);

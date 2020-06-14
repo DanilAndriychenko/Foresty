@@ -217,7 +217,7 @@ public class GameScreen extends ScreenAdapter {
                 pause = true;
                 for (Animal animal : animals) animal.pauseMove();
             }
-        }
+        }else if (Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE)) game.setScreen(game.levelsScreen);
 //        Determine if user press one of the following keys.
         ifKeyRecentlyPressed();
 //        Move tile every render.
@@ -669,18 +669,18 @@ public class GameScreen extends ScreenAdapter {
 
     public void slowDownAnimals() {
         if (timeElapsedFromTheSlowDown == 1) {
-            int newXVel, newYVel;
+            double newXVel, newYVel;
             for (Animal animal : animals) {
-                newXVel = (int) (((int) Math.signum(animal.getAnimalXVel())) * (Math.abs(animal.getAnimalXVel()) - REDUCTION_OF_SPEED_WHILE_SLOWING_DOWN));
-                newYVel = (int) (((int) Math.signum(animal.getAnimalYVel())) * (Math.abs(animal.getAnimalYVel()) - REDUCTION_OF_SPEED_WHILE_SLOWING_DOWN));
+                newXVel = (Math.signum(animal.getAnimalXVel())) * (Math.abs(animal.getAnimalXVel()) - REDUCTION_OF_SPEED_WHILE_SLOWING_DOWN);
+                newYVel = (Math.signum(animal.getAnimalYVel())) * (Math.abs(animal.getAnimalYVel()) - REDUCTION_OF_SPEED_WHILE_SLOWING_DOWN);
                 animal.setAnimalXVel(newXVel);
                 animal.setAnimalYVel(newYVel);
             }
         } else if (timeElapsedFromTheSlowDown == NUM_OF_RENDERS_OF_SLOWING_DOWN) {
-            int newXVel, newYVel;
+            double newXVel, newYVel;
             for (Animal animal : animals) {
-                newXVel = (int) (((int) Math.signum(animal.getAnimalXVel())) * (Math.abs(animal.getAnimalXVel()) + REDUCTION_OF_SPEED_WHILE_SLOWING_DOWN));
-                newYVel = (int) (((int) Math.signum(animal.getAnimalYVel())) * (Math.abs(animal.getAnimalYVel()) + REDUCTION_OF_SPEED_WHILE_SLOWING_DOWN));
+                newXVel = (Math.signum(animal.getAnimalXVel())) * (Math.abs(animal.getAnimalXVel()) + REDUCTION_OF_SPEED_WHILE_SLOWING_DOWN);
+                newYVel = (Math.signum(animal.getAnimalYVel())) * (Math.abs(animal.getAnimalYVel()) + REDUCTION_OF_SPEED_WHILE_SLOWING_DOWN);
                 animal.setAnimalXVel(newXVel);
                 animal.setAnimalYVel(newYVel);
             }
