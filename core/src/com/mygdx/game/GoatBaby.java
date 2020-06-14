@@ -34,6 +34,7 @@ public class GoatBaby extends Animal {
             super.moveAndDrawAnimal();
         }
         if (uncaught) {
+            uncaughtAnimals.clear();
             for (Animal animal : gameScreen.animals) {
                 if (!animal.animalCaught()) {
                     uncaughtAnimals.add(animal);
