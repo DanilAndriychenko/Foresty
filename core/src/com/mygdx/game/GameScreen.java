@@ -177,9 +177,13 @@ public class GameScreen extends ScreenAdapter {
                         //game.setScreen(LevelsScreen.fifthLevelScreen);
                     }
                 } else if(win && currentLevel.getNum() == 5){
-                    Circle home = new Circle(424, Gdx.graphics.getHeight() - 462, 40);
-                    Circle restart = new Circle(483, Gdx.graphics.getHeight() - 462, 40);
-                    //if()
+                    Circle home = new Circle(434, Gdx.graphics.getHeight() - 458, 40);
+                    Circle restart = new Circle(528, Gdx.graphics.getHeight() - 462, 40);
+                    if (home.contains(screenX, Gdx.graphics.getHeight() - screenY)) {
+                        game.setScreen(game.levelsScreen);
+                    } else if(restart.contains(screenX, Gdx.graphics.getHeight() - screenY)){
+                        game.setScreen(new GameScreen(game, LevelsScreen.lvlFifthAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.FIVE));
+                    }
                 }else if (lose) {
                     Circle home = new Circle(424, Gdx.graphics.getHeight() - 466, 40);
                     Circle restart = new Circle(529, Gdx.graphics.getHeight() - 466, 40);
