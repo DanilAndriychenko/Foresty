@@ -144,6 +144,24 @@ public class GameScreen extends ScreenAdapter {
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
                 if(win){
                     Circle home = new Circle(424, Gdx.graphics.getHeight() - 466, 40);
+                    Circle restart = new Circle(424, Gdx.graphics.getHeight() - 466, 40);
+                    Circle next = new Circle(424, Gdx.graphics.getHeight() - 466, 40);
+                    if (home.contains(screenX, Gdx.graphics.getHeight() - screenY))
+                        game.setScreen(game.levelsScreen);
+                    else if (restart.contains(screenX, Gdx.graphics.getHeight() - screenY)) {
+                        if (currentLevel == LevelsScreen.LevelsCompleted.ONE)
+                            game.setScreen(LevelsScreen.firstLevelScreen);
+                        else if (currentLevel == LevelsScreen.LevelsCompleted.TWO)
+                            game.setScreen(LevelsScreen.secondLevelScreen);
+                        else if (currentLevel == LevelsScreen.LevelsCompleted.THREE)
+                            game.setScreen(LevelsScreen.thirdLevelScreen);
+                        else if (currentLevel == LevelsScreen.LevelsCompleted.FOUR)
+                            game.setScreen(LevelsScreen.fourthLevelScreen);
+                        else if (currentLevel == LevelsScreen.LevelsCompleted.FIVE)
+                            game.setScreen(LevelsScreen.fifthLevelScreen);
+                    } else if (next.contains(screenX, Gdx.graphics.getHeight() - screenY)){
+
+                    }
                 }
                 return true;
             }
@@ -157,7 +175,8 @@ public class GameScreen extends ScreenAdapter {
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             if (pause) pause = false;
             else pause = true;
-        }if(!pause && !win && !lose) {
+        }
+        if (!pause) {
 //        Determine if user press one of the following keys.
             ifKeyRecentlyPressed();
 //        Move tile every render.
@@ -206,7 +225,6 @@ public class GameScreen extends ScreenAdapter {
 
             checkForWin();
             if (win) {
-                System.out.println(5);
                 if(gameTime <= secForThreeStars)
                     showGameEndScreen(winScreenTheeStars);
                 else if(gameTime <= secForTwoStars)
