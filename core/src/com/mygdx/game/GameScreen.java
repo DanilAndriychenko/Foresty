@@ -7,6 +7,7 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Circle;
 
 import java.awt.*;
 import java.util.Queue;
@@ -141,13 +142,8 @@ public class GameScreen extends ScreenAdapter {
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-                if (screenX >= 374 && screenX <= 450 && screenY >= 460 && screenY <= 535) {
-                    //TODO: write that the level is completed, save the number of stars
-                    //game.levelsScreen.levelCompleted();
-                    game.setScreen(game.levelsScreen);
-                } else if (screenX >= 505 && screenX <= 580 && screenY >= 460 && screenY <= 535) {
-                    // TODO: switch to next level, save data about completing level
-                    //game.levelsScreen.levelCompleted();
+                if(win){
+                    //Circle
                 }
                 return true;
             }
