@@ -143,34 +143,51 @@ public class GameScreen extends ScreenAdapter {
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
                 if(win){
-                    Circle home = new Circle(424, Gdx.graphics.getHeight() - 466, 40);
-                    Circle restart = new Circle(424, Gdx.graphics.getHeight() - 466, 40);
-                    Circle next = new Circle(424, Gdx.graphics.getHeight() - 466, 40);
+                    Circle home = new Circle(424, Gdx.graphics.getHeight() - 462, 40);
+                    Circle restart = new Circle(483, Gdx.graphics.getHeight() - 462, 40);
+                    Circle next = new Circle(582, Gdx.graphics.getHeight() - 462, 40);
                     if (home.contains(screenX, Gdx.graphics.getHeight() - screenY))
                         game.setScreen(game.levelsScreen);
-                    /*else if (restart.contains(screenX, Gdx.graphics.getHeight() - screenY)) {
+                    else if (restart.contains(screenX, Gdx.graphics.getHeight() - screenY)) {
                         if (currentLevel == LevelsScreen.LevelsCompleted.ONE)
-                            game.setScreen(LevelsScreen.firstLevelScreen);
+                            game.setScreen(new GameScreen(game, LevelsScreen.lvlFirstAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.ONE));
                         else if (currentLevel == LevelsScreen.LevelsCompleted.TWO)
-                            game.setScreen(LevelsScreen.secondLevelScreen);
+                            game.setScreen(new GameScreen(game, LevelsScreen.lvlSecondAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.TWO));
                         else if (currentLevel == LevelsScreen.LevelsCompleted.THREE)
-                            game.setScreen(LevelsScreen.thirdLevelScreen);
+                            game.setScreen(new GameScreen(game, LevelsScreen.lvlThirdAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.THREE));
                         else if (currentLevel == LevelsScreen.LevelsCompleted.FOUR)
-                            game.setScreen(LevelsScreen.fourthLevelScreen);
+                            game.setScreen(new GameScreen(game, LevelsScreen.lvlFourthAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.FOUR));
                         else if (currentLevel == LevelsScreen.LevelsCompleted.FIVE)
-                            game.setScreen(LevelsScreen.fifthLevelScreen);
+                            game.setScreen(new GameScreen(game, LevelsScreen.lvlFifthAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.FIVE));
                     } else if (next.contains(screenX, Gdx.graphics.getHeight() - screenY)){
                         if (currentLevel == LevelsScreen.LevelsCompleted.ONE)
-                            game.setScreen(LevelsScreen.secondLevelScreen);
+                            game.setScreen(new GameScreen(game, LevelsScreen.lvlSecondAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.TWO));
                         else if (currentLevel == LevelsScreen.LevelsCompleted.TWO)
-                            game.setScreen(LevelsScreen.thirdLevelScreen);
+                            game.setScreen(new GameScreen(game, LevelsScreen.lvlThirdAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.THREE));
                         else if (currentLevel == LevelsScreen.LevelsCompleted.THREE)
-                            game.setScreen(LevelsScreen.fourthLevelScreen);
+                            game.setScreen(new GameScreen(game, LevelsScreen.lvlFourthAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.FOUR));
                         else if (currentLevel == LevelsScreen.LevelsCompleted.FOUR)
-                            game.setScreen(LevelsScreen.fifthLevelScreen);
-                        *//*else if (currentLevel == LevelsScreen.LevelsCompleted.FIVE)
-                            game.setScreen(LevelsScreen.fifthLevelScreen);*//*
-                    }*/
+                            game.setScreen(new GameScreen(game, LevelsScreen.lvlFifthAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.FIVE));
+                    //else if (currentLevel == LevelsScreen.LevelsCompleted.FIVE)
+                            //game.setScreen(LevelsScreen.fifthLevelScreen);
+                    }
+                } else if(lose){
+                    Circle home = new Circle(424, Gdx.graphics.getHeight() - 466, 40);
+                    Circle restart = new Circle(529, Gdx.graphics.getHeight() - 466, 40);
+                    if (home.contains(screenX, Gdx.graphics.getHeight() - screenY))
+                        game.setScreen(game.levelsScreen);
+                    else if (restart.contains(screenX, Gdx.graphics.getHeight() - screenY)) {
+                        if (currentLevel == LevelsScreen.LevelsCompleted.ONE)
+                            game.setScreen(new GameScreen(game, LevelsScreen.lvlFirstAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.ONE));
+                        else if (currentLevel == LevelsScreen.LevelsCompleted.TWO)
+                            game.setScreen(new GameScreen(game, LevelsScreen.lvlSecondAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.TWO));
+                        else if (currentLevel == LevelsScreen.LevelsCompleted.THREE)
+                            game.setScreen(new GameScreen(game, LevelsScreen.lvlThirdAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.THREE));
+                        else if (currentLevel == LevelsScreen.LevelsCompleted.FOUR)
+                            game.setScreen(new GameScreen(game, LevelsScreen.lvlFourthAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.FOUR));
+                        else if (currentLevel == LevelsScreen.LevelsCompleted.FIVE)
+                            game.setScreen(new GameScreen(game, LevelsScreen.lvlFifthAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.FIVE));
+                    }
                 }
                 return true;
             }
