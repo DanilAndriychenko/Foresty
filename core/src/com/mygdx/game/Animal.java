@@ -18,7 +18,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Animal {
     private static final float FRAME_DURATION = 0.025f;
-    private static int RECT_SIZE = 32;
+    protected static int RECT_SIZE = 32;
     private static HashMap<String, Animation<TextureRegion>> rabbitAnimationsHashMap, horseAnimationsHashMap,
             sheepAnimationsHashMap, goatAnimationsHashMap, goatBabyAnimationsHashMap;
 
@@ -35,11 +35,11 @@ public class Animal {
                 32, 32, 4, 4, 4, true);
     }
 
-    private HashMap<String, Animation<TextureRegion>> stringAnimationHashMap;
-    private int animalXVel, animalYVel;
-    private int animalX, animalY;
-    private char[][] grid;
-    private HashSet<Point> borderPoints;
+    protected HashMap<String, Animation<TextureRegion>> stringAnimationHashMap;
+    protected int animalXVel, animalYVel;
+    protected int animalX, animalY;
+    protected char[][] grid;
+    protected HashSet<Point> borderPoints;
     private LinkedHashSet<Point> tracePoints;
     private SpriteBatch spriteBatch;
     private boolean caught = false, pause = false;
@@ -134,6 +134,7 @@ public class Animal {
      * Moves animal and draw it using spriteBatch.
      */
     public void moveAndDrawAnimal() {
+        System.out.println("Inside");
         if (!pause) {
             reflectFromTheBorderIfNeeded();
             if (crossesLine()) {
@@ -182,11 +183,27 @@ public class Animal {
         return pause;
     }
 
-    private void setRandomLocation() {
+    protected void setRandomLocation() {
         do {
             animalX = ThreadLocalRandom.current().nextInt(RECT_SIZE, Gdx.graphics.getWidth() - 2 * RECT_SIZE + 1);
             animalY = ThreadLocalRandom.current().nextInt(RECT_SIZE, Gdx.graphics.getHeight() - 2 * RECT_SIZE + 1);
         } while (grid[animalY / RECT_SIZE][animalX / RECT_SIZE] != '.');
+    }
+
+    public int getAnimalXVel() {
+        return animalXVel;
+    }
+
+    public int getAnimalYVel() {
+        return animalYVel;
+    }
+
+    public int getAnimalX() {
+        return animalX;
+    }
+
+    public int getAnimalY() {
+        return animalY;
     }
 
     private void reflectFromTheBorderIfNeeded() {
@@ -246,7 +263,7 @@ public class Animal {
         return false;
     }
 
-    private boolean animalCaught() {
+    public boolean animalCaught() {
         if (grid[animalY / RECT_SIZE * 2][animalX / RECT_SIZE * 2] == 'C' || grid[animalY / RECT_SIZE * 2][animalX / RECT_SIZE * 2] == 'B')
             return true;
         else return false;
@@ -254,7 +271,7 @@ public class Animal {
 
     public enum TYPES {
         DOG(rabbitAnimationsHashMap, 2, 2),
-        HORSE(horseAnimationsHashMap, 2, 2),
+        HORSE(horseAnimationsHashMap, 4, 3),
         SHEEP(sheepAnimationsHashMap, 2, 2),
         GOAT(goatAnimationsHashMap, 2, 2),
         GOAT_BABY(goatBabyAnimationsHashMap, 2, 2);
@@ -272,12 +289,12 @@ public class Animal {
             return stringAnimationHashMap;
         }
 
-        public int getAnimalXVel() {
-            return animalXVel;
-        }
-
         public int getAnimalYVel() {
             return animalYVel;
+        }
+
+        public int getAnimalXVel() {
+            return animalXVel;
         }
     }
 }
