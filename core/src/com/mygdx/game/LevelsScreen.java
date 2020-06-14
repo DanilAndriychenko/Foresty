@@ -8,21 +8,16 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
+import java.util.Scanner;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Scanner;
 
 public class LevelsScreen extends ScreenAdapter {
 
-    public static final HashMap<Animal.TYPES, Integer> lvlFirstAnimalsHashMap = new HashMap<>(),
-            lvlSecondAnimalsHashMap = new HashMap<>(),
-            lvlThirdAnimalsHashMap = new HashMap<>(),
-            lvlFourthAnimalsHashMap = new HashMap<>(),
-            lvlFifthAnimalsHashMap = new HashMap<>();
     private static final float SCREEN_WIDTH = Gdx.graphics.getWidth(),
             SCREEN_HEIGHT = Gdx.graphics.getHeight();
     private static final OrthographicCamera camera = new OrthographicCamera(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -35,6 +30,11 @@ public class LevelsScreen extends ScreenAdapter {
             fifthFarmTexture = new Texture(Gdx.files.internal("farm5.png")),
             star = new Texture("star.png"),
             locked = new Texture("locked.png");
+    public static final HashMap<Animal.TYPES, Integer> lvlFirstAnimalsHashMap = new HashMap<>(),
+            lvlSecondAnimalsHashMap = new HashMap<>(),
+            lvlThirdAnimalsHashMap = new HashMap<>(),
+            lvlFourthAnimalsHashMap = new HashMap<>(),
+            lvlFifthAnimalsHashMap = new HashMap<>();
     private static final float INCREASE_FARM_SIZE_COEFFICIENT = 2;
     private static final Rectangle rectFirstFarm = getFarmRect(firstFarmTexture, 1),
             rectSecondFarm = getFarmRect(secondFarmTexture, 2),
@@ -42,7 +42,11 @@ public class LevelsScreen extends ScreenAdapter {
             rectFourthFarm = getFarmRect(fourthFarmTexture, 4),
             rectFifthFarm = getFarmRect(fifthFarmTexture, 5);
     private static Foresty game;
+
+
     private static LevelsCompleted level;
+    private float cameraSpeed = 600;
+    private float cameraX = 0;
 
     static {
         // Add animals to levels hashMaps.
@@ -67,8 +71,6 @@ public class LevelsScreen extends ScreenAdapter {
         lvlFifthAnimalsHashMap.put(Animal.TYPES.GOAT_BABY, 1);
     }
 
-    private float cameraSpeed = 600;
-    private float cameraX = 0;
 
     LevelsScreen(Foresty game) {
         this.game = game;
@@ -79,6 +81,7 @@ public class LevelsScreen extends ScreenAdapter {
         this.game = game;
         this.level = level;
     }
+
 
 
     private static Rectangle getFarmRect(Texture texture, int numInRow) {
@@ -105,6 +108,9 @@ public class LevelsScreen extends ScreenAdapter {
             cameraX = 0;
         }
         System.out.println("screenX: " + screenX + ", screenY: " + screenY + "cameraX: " + cameraX + ", cameraX+screenX: " + cameraX + screenX);
+    }
+    public static LevelsCompleted getLevel() {
+        return level;
     }
 
     @Override
@@ -198,9 +204,7 @@ public class LevelsScreen extends ScreenAdapter {
      * Sets the value of the current level to the next one.
      */
     public void levelCompleted() {
-        if (level.getNum() == 0)
-            level = LevelsCompleted.ONE;
-        else if (level.getNum() == 1)
+        if (level.getNum() == 1)
             level = LevelsCompleted.TWO;
         else if (level.getNum() == 2)
             level = LevelsCompleted.THREE;
@@ -250,26 +254,25 @@ public class LevelsScreen extends ScreenAdapter {
         }
 
         myReader.close();
-        String[] info = data.split("$");
-        if (info.length >= 3) {
-            System.out.println("Inside");
+        String[] info = data.split("\\$");
+        if(info.length >= 3){
             LevelsCompleted.ONE.setNumOfStars(Integer.parseInt(info[0]));
             LevelsCompleted.TWO.setNumOfStars(Integer.parseInt(info[1]));
             LevelsCompleted.THREE.setNumOfStars(Integer.parseInt(info[2]));
             LevelsCompleted.FOUR.setNumOfStars(Integer.parseInt(info[3]));
             LevelsCompleted.FIVE.setNumOfStars(Integer.parseInt(info[4]));
-            if (info[5] == "1")
-                level = LevelsCompleted.ONE;
-            if (info[5] == "2")
-                level = LevelsCompleted.TWO;
-            if (info[5] == "3")
-                level = LevelsCompleted.THREE;
-            if (info[5] == "4")
-                level = LevelsCompleted.FOUR;
-            if (info[5] == "5")
-                level = LevelsCompleted.FIVE;
-        }
+            if(Integer.parseInt(info[5]) == 1)
+                game.levelsScreen.level = LevelsCompleted.ONE;
+            if(Integer.parseInt(info[5]) == 2)
+                game.levelsScreen.level = LevelsCompleted.TWO;
+            if(Integer.parseInt(info[5]) == 3)
+                game.levelsScreen.level = LevelsCompleted.THREE;
+            if(Integer.parseInt(info[5]) == 4)
+                game.levelsScreen.level = LevelsCompleted.FOUR;
+            if(Integer.parseInt(info[5]) == 5)
+                game.levelsScreen.level = LevelsCompleted.FIVE;
     }
+}
 
     enum LevelsCompleted {
         ONE(1, 0), TWO(2, 0), THREE(3, 0), FOUR(4, 0), FIVE(5, 0);

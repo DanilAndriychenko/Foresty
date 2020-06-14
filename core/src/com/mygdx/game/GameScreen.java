@@ -28,12 +28,14 @@ public class GameScreen extends ScreenAdapter {
     private final int secForTwoStars;
     private final int secForThreeStars;
     private final int percOfFillForWin;
+    private long startTimeInMilliseconds;
     public ArrayList<Animal> animals;
     public char[][] grid;
     int rows, columns;
     int gameTime;
     int lastPressedKey;
     boolean clockwise;
+    private int timeElapsedFromTheSlowDown = 0;
     SpriteBatch spriteBatch;
     Texture headTexture, traceTexture, borderTexture, backgroundTexture;
     Texture blueFlowersOnSand, grassOnSand, pinkFlowersOnSand, rocksOnSand;
@@ -44,8 +46,6 @@ public class GameScreen extends ScreenAdapter {
     HashSet<Point> borderPoints;
     HashMap<Point, Texture> contentPoints;
     boolean turnedBefore;
-    private long startTimeInMilliseconds;
-    private int timeElapsedFromTheSlowDown = 0;
     private LevelsScreen.LevelsCompleted currentLevel;
     private HashMap<Animal.TYPES, Integer> typesIntegerHashMap;
     private Texture winScreenTheeStars, winScreenTwoStars, winScreenOneStars, gameOverScreen, winScreenZeroStars;
@@ -208,6 +208,7 @@ public class GameScreen extends ScreenAdapter {
             }
 
         }
+        //if (!pause) {
 //        Determine if user press one of the following keys.
         ifKeyRecentlyPressed();
 //        Move tile every render.
@@ -260,7 +261,7 @@ public class GameScreen extends ScreenAdapter {
             else if (gameTime <= secForTwoStars)
                 showGameEndScreen(winScreenTwoStars);
             else if (gameTime <= secForOneStar)
-                showGameEndScreen(winScreenTheeStars);
+                showGameEndScreen(winScreenOneStars);
             else
                 showGameEndScreen(winScreenZeroStars);
             return;
@@ -308,6 +309,7 @@ public class GameScreen extends ScreenAdapter {
                 invokeLaterKey = -1;
             }
             if (lastPressedKey == Input.Keys.W) {
+//                System.out.println("W in dot (" + currX + ", " + currY + ").");
                 currY += VELOCITY;
                 if (!turnedBefore) {
                     if (clockwise) {
@@ -331,6 +333,7 @@ public class GameScreen extends ScreenAdapter {
                     }
                 }
             } else if (lastPressedKey == Input.Keys.A) {
+//                System.out.println("A in dot (" + currX + ", " + currY + ").");
                 currX -= VELOCITY;
                 if (!turnedBefore) {
                     if (clockwise) {
@@ -354,6 +357,7 @@ public class GameScreen extends ScreenAdapter {
                     }
                 }
             } else if (lastPressedKey == Input.Keys.S) {
+//                System.out.println("S in dot (" + currX + ", " + currY + ").");
                 currY -= VELOCITY;
                 if (!turnedBefore) {
                     if (clockwise) {
@@ -378,6 +382,7 @@ public class GameScreen extends ScreenAdapter {
                 }
             } else if (lastPressedKey == Input.Keys.D) {
                 currX += VELOCITY;
+//                System.out.println("D in dot (" + currX + ", " + currY + ").");
                 if (!turnedBefore) {
                     if (clockwise) {
                         if (borderPoints.contains(new Point(currPoint.x, currPoint.y - RECT_SIZE))) {
@@ -627,24 +632,24 @@ public class GameScreen extends ScreenAdapter {
         if (!win) {
             if (allAnimalsAreCaught() || fieldIsFilled()) {
                 win = true;
+                if(game.levelsScreen.getLevel() == currentLevel)
                 game.levelsScreen.levelCompleted();
 
                 gameTime = (int) (System.currentTimeMillis() - startTimeInMilliseconds) / 1000;
                 System.out.println(gameTime);
                 if (gameTime <= secForThreeStars) {
-                    showGameEndScreen(winScreenTheeStars);
+                    //showGameEndScreen(winScreenTheeStars);
                     currentLevel.setNumOfStars(3);
                 } else if (gameTime <= secForTwoStars) {
-                    showGameEndScreen(winScreenTwoStars);
+                    //showGameEndScreen(winScreenTwoStars);
                     if (currentLevel.getNumOfStars() < 2)
                         currentLevel.setNumOfStars(2);
                 } else if (gameTime <= secForOneStar) {
-                    showGameEndScreen(winScreenTheeStars);
+                    //showGameEndScreen(winScreenOneStars);
                     if (currentLevel.getNumOfStars() < 1)
                         currentLevel.setNumOfStars(1);
                 } else {
-                    //TODO create win screen with 0 stars
-                    showGameEndScreen(winScreenTheeStars);
+                    //showGameEndScreen(winScreenZeroStars);
                     currentLevel.setNumOfStars(0);
                 }
             }
