@@ -153,7 +153,6 @@ public class Animal {
         }
         if (!caught) {
             if (animalCaught()) {
-                System.out.println("Animal has been caught.");
                 caught = true;
                 if (animalXVel>0) animalXVel=1;
                 else animalXVel=-1;
@@ -242,26 +241,6 @@ public class Animal {
         if (reflectY) {
             animalYVel *= -1;
         }
-        //TODO: test this one below
-//        Circle animalRectWest = new Circle(animalX - animalXVel + 16, animalY + 16, RECT_SIZE/2);
-//        Circle animalRectNorth = new Circle(animalX + 16, animalY + animalYVel + 16, RECT_SIZE/2);
-//        Circle animalRectEast = new Circle(animalX + animalXVel + 16, animalY + 16, RECT_SIZE/2);
-//        Circle animalRectSouth = new Circle(animalX + 16, animalY - animalYVel + 16, RECT_SIZE/2);
-//        Iterator<Point> pointIterator = borderPoints.iterator();
-//        Point point;
-//        boolean reflectX = false, reflectY = false;
-//        while (pointIterator.hasNext()) {
-//            point = pointIterator.next();
-//            Rectangle borderRect = new Rectangle(point.x, point.y, 16, 16);
-//            if (Intersector.overlaps(animalRectWest, borderRect) || Intersector.overlaps(animalRectEast, borderRect)) reflectX = true;
-//            if (Intersector.overlaps(animalRectNorth, borderRect) || Intersector.overlaps(animalRectSouth, borderRect)) reflectY = true;
-//        }
-//        if (reflectX) {
-//            animalXVel *= -1;
-//        }
-//        if (reflectY) {
-//            animalYVel *= -1;
-//        }
     }
 
     public boolean crossesLine() {
