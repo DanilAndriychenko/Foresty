@@ -23,28 +23,28 @@ public class Goat extends Animal {
         //TODO make goat destroy field after being caught
         if (this.animalCaught()) {
             System.out.println("caught");
-            int animalCurrGridX = (int) this.getAnimalX() / RECT_SIZE + 1;
-            int animalCurrGridY = (int) this.getAnimalY() / RECT_SIZE + 1;
+            int animalCurrGridX = (int) this.getAnimalX() / ANIMAL_SIZE + 1;
+            int animalCurrGridY = (int) this.getAnimalY() / ANIMAL_SIZE + 1;
             for (int y = animalCurrGridY - 1; y < animalCurrGridY + 1; y++) {
                 for (int x = animalCurrGridX - 1; x < animalCurrGridX + 1; x++) {
                     if (x < grid[0].length && x >= 0 && y < grid.length && y >= 0) {
-                        contentPoints.remove(new Point(x*RECT_SIZE/2, y*RECT_SIZE/2));
+                        contentPoints.remove(new Point(x* ANIMAL_SIZE /2, y* ANIMAL_SIZE /2));
                         grid[x][y] = '.';
                     }
                 }
             }
             for (int y = animalCurrGridY - 2; y < animalCurrGridY + 2; y++) {
                 if (y < grid.length && y >= 0) {
-                    borderPoints.add(new Point((animalCurrGridX - 2)*RECT_SIZE/2, y*RECT_SIZE/2));
-                    borderPoints.add(new Point((animalCurrGridX + 2)*RECT_SIZE/2, y*RECT_SIZE/2));
+                    borderPoints.add(new Point((animalCurrGridX - 2)* ANIMAL_SIZE /2, y* ANIMAL_SIZE /2));
+                    borderPoints.add(new Point((animalCurrGridX + 2)* ANIMAL_SIZE /2, y* ANIMAL_SIZE /2));
                     grid[animalCurrGridX - 2][y] = 'B';
                     grid[animalCurrGridX + 2][y] = 'B';
                 }
             }
             for (int x = animalCurrGridX - 2; x < animalCurrGridX + 2; x++) {
                 if (x < grid[0].length && x >= 0) {
-                    borderPoints.add(new Point(x*RECT_SIZE/2, (animalCurrGridY - 2)*RECT_SIZE/2));
-                    borderPoints.add(new Point(x*RECT_SIZE/2, (animalCurrGridY + 2)*RECT_SIZE/2));
+                    borderPoints.add(new Point(x* ANIMAL_SIZE /2, (animalCurrGridY - 2)* ANIMAL_SIZE /2));
+                    borderPoints.add(new Point(x* ANIMAL_SIZE /2, (animalCurrGridY + 2)* ANIMAL_SIZE /2));
                     grid[x][animalCurrGridY - 2] = 'B';
                     grid[x][animalCurrGridY + 2] = 'B';
                 }
