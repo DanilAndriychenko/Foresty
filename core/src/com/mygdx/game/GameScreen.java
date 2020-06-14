@@ -202,6 +202,7 @@ public class GameScreen extends ScreenAdapter {
             if (win) {
                 game.levelsScreen.levelCompleted();
                 int gameTime = (int) (System.currentTimeMillis() - startTimeInMilliseconds) / 1000;
+                System.out.println(gameTime);
                 if (gameTime <= secForThreeStars) {
                     showGameEndScreen(winScreenTheeStars);
                     currentLevel.setNumOfStars(3);
@@ -268,7 +269,6 @@ public class GameScreen extends ScreenAdapter {
                 invokeLaterKey = -1;
             }
             if (lastPressedKey == Input.Keys.W) {
-//                System.out.println("W in dot (" + currX + ", " + currY + ").");
                 currY += VELOCITY;
                 if (!turnedBefore) {
                     if (clockwise) {
@@ -292,7 +292,6 @@ public class GameScreen extends ScreenAdapter {
                     }
                 }
             } else if (lastPressedKey == Input.Keys.A) {
-//                System.out.println("A in dot (" + currX + ", " + currY + ").");
                 currX -= VELOCITY;
                 if (!turnedBefore) {
                     if (clockwise) {
@@ -316,7 +315,6 @@ public class GameScreen extends ScreenAdapter {
                     }
                 }
             } else if (lastPressedKey == Input.Keys.S) {
-//                System.out.println("S in dot (" + currX + ", " + currY + ").");
                 currY -= VELOCITY;
                 if (!turnedBefore) {
                     if (clockwise) {
@@ -341,7 +339,6 @@ public class GameScreen extends ScreenAdapter {
                 }
             } else if (lastPressedKey == Input.Keys.D) {
                 currX += VELOCITY;
-//                System.out.println("D in dot (" + currX + ", " + currY + ").");
                 if (!turnedBefore) {
                     if (clockwise) {
                         if (borderPoints.contains(new Point(currPoint.x, currPoint.y - RECT_SIZE))) {
@@ -504,11 +501,11 @@ public class GameScreen extends ScreenAdapter {
     }
 
     private void printFiveCells() {
-        System.out.println("Current: " + grid[currPoint.y / RECT_SIZE][currPoint.x / RECT_SIZE] + ", coordinates: " + currPoint.y / RECT_SIZE + ", " + currPoint.x / RECT_SIZE);
-        System.out.println("Upper: " + grid[currPoint.y / RECT_SIZE + 1][currPoint.x / RECT_SIZE] + ", coordinates: " + (currPoint.y / RECT_SIZE + 1) + ", " + currPoint.x / RECT_SIZE);
-        System.out.println("Under: " + grid[currPoint.y / RECT_SIZE - 1][currPoint.x / RECT_SIZE] + ", coordinates: " + (currPoint.y / RECT_SIZE - 1) + ", " + currPoint.x / RECT_SIZE);
-        System.out.println("Right: " + grid[currPoint.y / RECT_SIZE][currPoint.x / RECT_SIZE + 1] + ", coordinates: " + currPoint.y / RECT_SIZE + ", " + (currPoint.x / RECT_SIZE + 1));
-        System.out.println("Left: " + grid[currPoint.y / RECT_SIZE][currPoint.x / RECT_SIZE - 1] + ", coordinates: " + currPoint.y / RECT_SIZE + ", " + (currPoint.x / RECT_SIZE - 1));
+//        System.out.println("Current: " + grid[currPoint.y / RECT_SIZE][currPoint.x / RECT_SIZE] + ", coordinates: " + currPoint.y / RECT_SIZE + ", " + currPoint.x / RECT_SIZE);
+//        System.out.println("Upper: " + grid[currPoint.y / RECT_SIZE + 1][currPoint.x / RECT_SIZE] + ", coordinates: " + (currPoint.y / RECT_SIZE + 1) + ", " + currPoint.x / RECT_SIZE);
+//        System.out.println("Under: " + grid[currPoint.y / RECT_SIZE - 1][currPoint.x / RECT_SIZE] + ", coordinates: " + (currPoint.y / RECT_SIZE - 1) + ", " + currPoint.x / RECT_SIZE);
+//        System.out.println("Right: " + grid[currPoint.y / RECT_SIZE][currPoint.x / RECT_SIZE + 1] + ", coordinates: " + currPoint.y / RECT_SIZE + ", " + (currPoint.x / RECT_SIZE + 1));
+//        System.out.println("Left: " + grid[currPoint.y / RECT_SIZE][currPoint.x / RECT_SIZE - 1] + ", coordinates: " + currPoint.y / RECT_SIZE + ", " + (currPoint.x / RECT_SIZE - 1));
     }
 
     private Point getDotInGrid() {
@@ -612,10 +609,10 @@ public class GameScreen extends ScreenAdapter {
                 animal.setAnimalYVel(newYVel);
             }
         }
-        for (Animal animal : animals) {
-            System.out.println(animal.getAnimalXVel());
-            System.out.println(animal.getAnimalYVel());
-        }
+//        for (Animal animal : animals) {
+//            System.out.println(animal.getAnimalXVel());
+//            System.out.println(animal.getAnimalYVel());
+//        }
         timeElapsedFromTheSlowDown++;
     }
 
