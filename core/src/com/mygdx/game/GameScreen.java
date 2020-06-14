@@ -35,7 +35,6 @@ public class GameScreen extends ScreenAdapter {
     int gameTime;
     int lastPressedKey;
     boolean clockwise;
-    private int timeElapsedFromTheSlowDown = 0;
     SpriteBatch spriteBatch;
     Texture headTexture, traceTexture, borderTexture, backgroundTexture;
     Texture blueFlowersOnSand, grassOnSand, pinkFlowersOnSand, rocksOnSand;
@@ -46,6 +45,7 @@ public class GameScreen extends ScreenAdapter {
     HashSet<Point> borderPoints;
     HashMap<Point, Texture> contentPoints;
     boolean turnedBefore;
+    private int timeElapsedFromTheSlowDown = 0;
     private LevelsScreen.LevelsCompleted currentLevel;
     private HashMap<Animal.TYPES, Integer> typesIntegerHashMap;
     private Texture winScreenTheeStars, winScreenTwoStars, winScreenOneStars, gameOverScreen, winScreenZeroStars;
@@ -125,15 +125,15 @@ public class GameScreen extends ScreenAdapter {
         animals = new ArrayList<>();
         for (Map.Entry<Animal.TYPES, Integer> entry : typesIntegerHashMap.entrySet()) {
             for (int i = 0; i < entry.getValue(); i++) {
-                if(entry.getKey() == Animal.TYPES.DOG){
+                if (entry.getKey() == Animal.TYPES.DOG) {
                     animals.add(new Dog(grid, spriteBatch, borderPoints, tracePoints));
-                }else if(entry.getKey() == Animal.TYPES.HORSE){
+                } else if (entry.getKey() == Animal.TYPES.HORSE) {
                     animals.add(new Horse(grid, spriteBatch, borderPoints, tracePoints, this));
-                }else if(entry.getKey() == Animal.TYPES.GOAT){
+                } else if (entry.getKey() == Animal.TYPES.GOAT) {
                     animals.add(new Goat(grid, spriteBatch, borderPoints, tracePoints, contentPoints));
-                }else if(entry.getKey() == Animal.TYPES.GOAT_BABY){
+                } else if (entry.getKey() == Animal.TYPES.GOAT_BABY) {
                     animals.add(new GoatBaby(grid, spriteBatch, borderPoints, tracePoints, this));
-                }else if(entry.getKey() == Animal.TYPES.SHEEP){
+                } else if (entry.getKey() == Animal.TYPES.SHEEP) {
                     animals.add(new Sheep(grid, spriteBatch, borderPoints, tracePoints));
                 }
             }
@@ -142,7 +142,7 @@ public class GameScreen extends ScreenAdapter {
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-                if(win){
+                if (win) {
                     Circle home = new Circle(424, Gdx.graphics.getHeight() - 466, 40);
                     Circle restart = new Circle(424, Gdx.graphics.getHeight() - 466, 40);
                     Circle next = new Circle(424, Gdx.graphics.getHeight() - 466, 40);
@@ -185,7 +185,6 @@ public class GameScreen extends ScreenAdapter {
             if (pause) pause = false;
             else pause = true;
         }
-        //if (!pause) {
 //        Determine if user press one of the following keys.
             ifKeyRecentlyPressed();
 //        Move tile every render.
@@ -223,14 +222,13 @@ public class GameScreen extends ScreenAdapter {
             for (Animal animal : animals) {
                 if (!animal.isMovePaused()) animal.moveAndDrawAnimal();
             }
-        //}
 
-            if(pause){
-                spriteBatch.begin();
-                spriteBatch.draw(pauseTexture, Gdx.graphics.getWidth()/2 - pauseTexture.getWidth()/2, Gdx.graphics.getHeight()/2 - pauseTexture.getHeight()/2);
-                spriteBatch.end();
-                return;
-            }
+        if (pause) {
+            spriteBatch.begin();
+            spriteBatch.draw(pauseTexture, Gdx.graphics.getWidth() / 2 - pauseTexture.getWidth() / 2, Gdx.graphics.getHeight() / 2 - pauseTexture.getHeight() / 2);
+            spriteBatch.end();
+            return;
+        }
 
             checkForWin();
             if (win) {
@@ -245,20 +243,18 @@ public class GameScreen extends ScreenAdapter {
                 return;
             }
 
-
-            checkForLose();
-            if (lose)
-                showGameEndScreen(gameOverScreen);
-
-
+        checkForLose();
+        if (lose)
+            showGameEndScreen(gameOverScreen);
     }
 
     /**
      * use when the game ends to show gameOverScreenTexture
+     *
      * @param gameOverScreenTexture
      */
 
-    private void showGameEndScreen(Texture gameOverScreenTexture){
+    private void showGameEndScreen(Texture gameOverScreenTexture) {
         for (Animal animal : animals) {
             animal.setAnimalXVel(0);
             animal.setAnimalYVel(0);
@@ -288,7 +284,6 @@ public class GameScreen extends ScreenAdapter {
                 invokeLaterKey = -1;
             }
             if (lastPressedKey == Input.Keys.W) {
-//                System.out.println("W in dot (" + currX + ", " + currY + ").");
                 currY += VELOCITY;
                 if (!turnedBefore) {
                     if (clockwise) {
@@ -312,7 +307,6 @@ public class GameScreen extends ScreenAdapter {
                     }
                 }
             } else if (lastPressedKey == Input.Keys.A) {
-//                System.out.println("A in dot (" + currX + ", " + currY + ").");
                 currX -= VELOCITY;
                 if (!turnedBefore) {
                     if (clockwise) {
@@ -336,7 +330,6 @@ public class GameScreen extends ScreenAdapter {
                     }
                 }
             } else if (lastPressedKey == Input.Keys.S) {
-//                System.out.println("S in dot (" + currX + ", " + currY + ").");
                 currY -= VELOCITY;
                 if (!turnedBefore) {
                     if (clockwise) {
@@ -361,7 +354,6 @@ public class GameScreen extends ScreenAdapter {
                 }
             } else if (lastPressedKey == Input.Keys.D) {
                 currX += VELOCITY;
-//                System.out.println("D in dot (" + currX + ", " + currY + ").");
                 if (!turnedBefore) {
                     if (clockwise) {
                         if (borderPoints.contains(new Point(currPoint.x, currPoint.y - RECT_SIZE))) {
@@ -585,15 +577,16 @@ public class GameScreen extends ScreenAdapter {
         return grassOnSand;
     }
 
-    private boolean allAnimalsAreCaught(){
+    private boolean allAnimalsAreCaught() {
         for (Animal animal : animals) {
             if (!animal.animalCaught()) {
                 return false;
             }
-        }return true;
+        }
+        return true;
     }
 
-    private boolean fieldIsFilled(){
+    private boolean fieldIsFilled() {
         double currFillCells = 0, totalCells = (rows - 2) * (columns - 2);
         for (int i = 1; i < rows - 1; i++) {
             for (int j = 1; j < columns - 1; j++) {
@@ -608,9 +601,8 @@ public class GameScreen extends ScreenAdapter {
 
     private void checkForWin() {
         if (!win) {
-            if(allAnimalsAreCaught() || fieldIsFilled()) {
+            if (allAnimalsAreCaught() || fieldIsFilled()) {
                 win = true;
-                System.out.println(game);
                 game.levelsScreen.levelCompleted();
 
                 gameTime = (int) (System.currentTimeMillis() - startTimeInMilliseconds) / 1000;
@@ -636,11 +628,11 @@ public class GameScreen extends ScreenAdapter {
     }
 
     private void checkForLose() {
-            for (Animal animal : animals) {
-                if (animal.crossesLine()) {
-                    lose = true;
-                }
+        for (Animal animal : animals) {
+            if (animal.crossesLine()) {
+                lose = true;
             }
+        }
     }
 
     public void slowDownAnimals() {
