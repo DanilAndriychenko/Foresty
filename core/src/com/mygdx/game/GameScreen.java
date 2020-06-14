@@ -143,7 +143,7 @@ public class GameScreen extends ScreenAdapter {
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
                 if(win){
-                    //Circle
+                    Circle home = new Circle(424, Gdx.graphics.getHeight() - 466, 40);
                 }
                 return true;
             }
@@ -195,7 +195,7 @@ public class GameScreen extends ScreenAdapter {
             for (Animal animal : animals) {
                 if (!animal.isMovePaused()) animal.moveAndDrawAnimal();
             }
-
+        }
 
             if(pause){
                 spriteBatch.begin();
@@ -206,6 +206,7 @@ public class GameScreen extends ScreenAdapter {
 
             checkForWin();
             if (win) {
+                System.out.println(5);
                 if(gameTime <= secForThreeStars)
                     showGameEndScreen(winScreenTheeStars);
                 else if(gameTime <= secForTwoStars)
@@ -222,7 +223,7 @@ public class GameScreen extends ScreenAdapter {
             if (lose)
                 showGameEndScreen(gameOverScreen);
 
-        }
+
     }
 
     /**
@@ -238,7 +239,6 @@ public class GameScreen extends ScreenAdapter {
         spriteBatch.begin();
         spriteBatch.draw(gameOverScreenTexture, Gdx.graphics.getWidth() / 2 - winScreenTheeStars.getWidth() / 2, Gdx.graphics.getHeight() / 2 - winScreenTheeStars.getHeight() / 2);
         spriteBatch.end();
-        //todo: add listeners for lose, stop the game
     }
 
     @Override

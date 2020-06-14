@@ -84,19 +84,19 @@ public class LevelsScreen extends ScreenAdapter {
 
     private void handleUsersClick(int screenX, int screenY) {
         if (rectFirstFarm.contains(screenX+cameraX, screenY)){
-            game.setScreen(new GameScreen(game, lvlFirstAnimalsHashMap, 90, 45, 30, 15, LevelsCompleted.ONE));
+            game.setScreen(new GameScreen(game, lvlFirstAnimalsHashMap, 45, 30, 15, 75, LevelsCompleted.ONE));
             cameraX=0;
         }else if (rectSecondFarm.contains(screenX+cameraX, screenY) && level.getNum() + 1 >= 2){
-            game.setScreen(new GameScreen(game, lvlSecondAnimalsHashMap, 90, 45, 30, 15, LevelsCompleted.TWO));
+            game.setScreen(new GameScreen(game, lvlSecondAnimalsHashMap, 45, 30, 15, 75, LevelsCompleted.TWO));
             cameraX=0;
         }else if (rectThirdFarm.contains(screenX+cameraX, screenY) && level.getNum() + 1 >= 3){
-            game.setScreen(new GameScreen(game, lvlThirdAnimalsHashMap, 90, 45, 30, 15, LevelsCompleted.THREE));
+            game.setScreen(new GameScreen(game, lvlThirdAnimalsHashMap, 45, 30, 15, 75, LevelsCompleted.THREE));
             cameraX=0;
         }else if (rectFourthFarm.contains(screenX+cameraX, screenY) && level.getNum() + 1 >= 4){
-            game.setScreen(new GameScreen(game, lvlFourthAnimalsHashMap, 90, 45, 30, 15, LevelsCompleted.FOUR));
+            game.setScreen(new GameScreen(game, lvlFourthAnimalsHashMap, 45, 30, 15, 75, LevelsCompleted.FOUR));
             cameraX=0;
         }else if (rectFifthFarm.contains(screenX+cameraX, screenY) && level.getNum() + 1 >= 5){
-            game.setScreen(new GameScreen(game, lvlFifthAnimalsHashMap, 90, 45, 30, 15, LevelsCompleted.FIVE));
+            game.setScreen(new GameScreen(game, lvlFifthAnimalsHashMap, 45, 30, 15, 75, LevelsCompleted.FIVE));
             cameraX=0;
         }
         System.out.println("screenX: " + screenX + ", screenY: " + screenY + "cameraX: " + cameraX + ", cameraX+screenX: " + cameraX+screenX);
