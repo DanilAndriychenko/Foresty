@@ -8,7 +8,9 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
+import java.util.Scanner;
 
+import java.io.*;
 import java.util.HashMap;
 
 public class LevelsScreen extends ScreenAdapter {
@@ -67,6 +69,11 @@ public class LevelsScreen extends ScreenAdapter {
     LevelsScreen(Foresty game) {
         this.game = game;
         level = LevelsCompleted.ONE;
+    }
+
+    LevelsScreen(Foresty game, LevelsCompleted level){
+        this.game = game;
+        this.level = level;
     }
 
     private static Rectangle getFarmRect(Texture texture, int numInRow) {
@@ -227,10 +234,71 @@ public class LevelsScreen extends ScreenAdapter {
             level = LevelsCompleted.FOUR;
         else if (level.getNum() == 4)
             level = LevelsCompleted.FIVE;
+        saveLevelInfoToFile();
     }
 
+    private void saveLevelInfoToFile(){
+        File file = new File("core/assets/Savings/LevelsData");
+        FileWriter fr = null;
+        String data = "";
+        data+=LevelsCompleted.ONE.getNumOfStars() + "$" +
+              LevelsCompleted.TWO.getNumOfStars() + "$" +
+              LevelsCompleted.THREE.getNumOfStars() + "$" +
+              LevelsCompleted.FOUR.getNumOfStars() + "$" +
+              LevelsCompleted.FIVE.getNumOfStars() + "$" +
+              level.getNum();
+        try {
+            fr = new FileWriter(file);
+            fr.write(data);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally{
+            try {
+                fr.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void setSavedInfo() {
+        //boolean
+        File myObj = new File("core/assets/Savings/LevelsData");
+        Scanner myReader = null;
+        String data = "";
+        try {
+            myReader = new Scanner(myObj);
+            while (myReader.hasNextLine()) {
+                data = myReader.nextLine();
+            }
+        } catch (FileNotFoundException fileNotFoundException) {
+            fileNotFoundException.printStackTrace();
+        }
+
+        myReader.close();
+        String[] info = data.split("$");
+        if(info.length >= 3){
+            System.out.println("Inside");
+            LevelsCompleted.ONE.setNumOfStars(Integer.parseInt(info[0]));
+            LevelsCompleted.TWO.setNumOfStars(Integer.parseInt(info[1]));
+            LevelsCompleted.THREE.setNumOfStars(Integer.parseInt(info[2]));
+            LevelsCompleted.FOUR.setNumOfStars(Integer.parseInt(info[3]));
+            LevelsCompleted.FIVE.setNumOfStars(Integer.parseInt(info[4]));
+            if(info[5] == "1")
+                level = LevelsCompleted.ONE;
+            if(info[5] == "2")
+                level = LevelsCompleted.TWO;
+            if(info[5] == "3")
+                level = LevelsCompleted.THREE;
+            if(info[5] == "4")
+                level = LevelsCompleted.FOUR;
+            if(info[5] == "5")
+                level = LevelsCompleted.FIVE;
+    }
+}
+
     enum LevelsCompleted {
-        ZERO(0, 0), ONE(1, 0), TWO(2, 0), THREE(3, 0), FOUR(4, 0), FIVE(5, 0);
+        ONE(1, 0), TWO(2, 0), THREE(3, 0), FOUR(4, 0), FIVE(5, 0);
         private int num;
         private int numOfStars;
 

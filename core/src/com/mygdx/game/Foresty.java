@@ -17,6 +17,7 @@ public class Foresty extends Game {
         spriteBatch = new SpriteBatch();
         musicOnTitleAndLevelsScreens = Gdx.audio.newMusic(Gdx.files.internal("TitleScreenMusic.mp3"));
         levelsScreen = new LevelsScreen(this);
+        levelsScreen.setSavedInfo();
 
         // Start playing music for title and levels screens.
         musicOnTitleAndLevelsScreens.setLooping(true);
