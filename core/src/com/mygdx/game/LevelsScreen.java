@@ -38,7 +38,6 @@ public class LevelsScreen extends ScreenAdapter {
             rectThirdFarm = getFarmRect(thirdFarmTexture, 3),
             rectFourthFarm = getFarmRect(fourthFarmTexture, 4),
             rectFifthFarm = getFarmRect(fifthFarmTexture, 5);
-    public static GameScreen firstLevelScreen, secondLevelScreen,thirdLevelScreen,fourthLevelScreen,fifthLevelScreen;
     private static Foresty game;
     private static LevelsCompleted level;
     private float cameraSpeed = 600;
@@ -65,13 +64,7 @@ public class LevelsScreen extends ScreenAdapter {
         lvlFifthAnimalsHashMap.put(Animal.TYPES.HORSE, 1);
         lvlFifthAnimalsHashMap.put(Animal.TYPES.GOAT, 1);
         lvlFifthAnimalsHashMap.put(Animal.TYPES.GOAT_BABY, 1);
-
-        firstLevelScreen = new GameScreen(game, lvlFirstAnimalsHashMap, 45, 30, 15, 75, LevelsCompleted.ONE);
-        secondLevelScreen = new GameScreen(game, lvlSecondAnimalsHashMap, 45, 30, 15, 75, LevelsCompleted.TWO);
-        thirdLevelScreen = new GameScreen(game, lvlThirdAnimalsHashMap, 45, 30, 15, 75, LevelsCompleted.THREE);
-        fourthLevelScreen = new GameScreen(game, lvlFourthAnimalsHashMap, 45, 30, 15, 75, LevelsCompleted.FOUR);
-        fifthLevelScreen = new GameScreen(game, lvlFifthAnimalsHashMap, 45, 30, 15, 75, LevelsCompleted.FIVE);
-    }
+       }
 
     LevelsScreen(Foresty game) {
         this.game = game;
@@ -83,6 +76,8 @@ public class LevelsScreen extends ScreenAdapter {
         this.level = level;
     }
 
+
+
     private static Rectangle getFarmRect(Texture texture, int numInRow) {
         System.out.println(texture.getWidth() + ", " + texture.getHeight());
         return new Rectangle(mapBackground.getWidth() * ((numInRow * 2 - 1) / 10f) - texture.getWidth() / 2, mapBackground.getHeight() / 2 - texture.getHeight() / 2,
@@ -91,19 +86,19 @@ public class LevelsScreen extends ScreenAdapter {
 
     private void handleUsersClick(int screenX, int screenY) {
         if (rectFirstFarm.contains(screenX+cameraX, screenY)){
-            game.setScreen(firstLevelScreen);
+            game.setScreen(new GameScreen(game, lvlFirstAnimalsHashMap, 45, 30, 15, 75, LevelsCompleted.ONE));
             cameraX=0;
         }else if (rectSecondFarm.contains(screenX+cameraX, screenY) && level.getNum() + 1 >= 2){
-            game.setScreen(secondLevelScreen);
+            game.setScreen(new GameScreen(game, lvlSecondAnimalsHashMap, 45, 30, 15, 75, LevelsCompleted.TWO));
             cameraX=0;
         }else if (rectThirdFarm.contains(screenX+cameraX, screenY) && level.getNum() + 1 >= 3){
-            game.setScreen(thirdLevelScreen);
+            game.setScreen(new GameScreen(game, lvlThirdAnimalsHashMap, 45, 30, 15, 75, LevelsCompleted.THREE));
             cameraX=0;
         }else if (rectFourthFarm.contains(screenX+cameraX, screenY) && level.getNum() + 1 >= 4){
-            game.setScreen(fourthLevelScreen);
+            game.setScreen(new GameScreen(game, lvlFourthAnimalsHashMap, 45, 30, 15, 75, LevelsCompleted.FOUR));
             cameraX=0;
         }else if (rectFifthFarm.contains(screenX+cameraX, screenY) && level.getNum() + 1 >= 5){
-            game.setScreen(fifthLevelScreen);
+            game.setScreen(new GameScreen(game, lvlFifthAnimalsHashMap, 45, 30, 15, 75, LevelsCompleted.FIVE));
             cameraX=0;
         }
         System.out.println("screenX: " + screenX + ", screenY: " + screenY + "cameraX: " + cameraX + ", cameraX+screenX: " + cameraX+screenX);

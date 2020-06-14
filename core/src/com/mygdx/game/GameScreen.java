@@ -28,7 +28,7 @@ public class GameScreen extends ScreenAdapter {
     private final int secForTwoStars;
     private final int secForThreeStars;
     private final int percOfFillForWin;
-    private final long startTimeInMilliseconds;
+    private long startTimeInMilliseconds;
     public ArrayList<Animal> animals;
     public char[][] grid;
     int rows, columns;
@@ -148,7 +148,7 @@ public class GameScreen extends ScreenAdapter {
                     Circle next = new Circle(424, Gdx.graphics.getHeight() - 466, 40);
                     if (home.contains(screenX, Gdx.graphics.getHeight() - screenY))
                         game.setScreen(game.levelsScreen);
-                    else if (restart.contains(screenX, Gdx.graphics.getHeight() - screenY)) {
+                    /*else if (restart.contains(screenX, Gdx.graphics.getHeight() - screenY)) {
                         if (currentLevel == LevelsScreen.LevelsCompleted.ONE)
                             game.setScreen(LevelsScreen.firstLevelScreen);
                         else if (currentLevel == LevelsScreen.LevelsCompleted.TWO)
@@ -160,8 +160,17 @@ public class GameScreen extends ScreenAdapter {
                         else if (currentLevel == LevelsScreen.LevelsCompleted.FIVE)
                             game.setScreen(LevelsScreen.fifthLevelScreen);
                     } else if (next.contains(screenX, Gdx.graphics.getHeight() - screenY)){
-
-                    }
+                        if (currentLevel == LevelsScreen.LevelsCompleted.ONE)
+                            game.setScreen(LevelsScreen.secondLevelScreen);
+                        else if (currentLevel == LevelsScreen.LevelsCompleted.TWO)
+                            game.setScreen(LevelsScreen.thirdLevelScreen);
+                        else if (currentLevel == LevelsScreen.LevelsCompleted.THREE)
+                            game.setScreen(LevelsScreen.fourthLevelScreen);
+                        else if (currentLevel == LevelsScreen.LevelsCompleted.FOUR)
+                            game.setScreen(LevelsScreen.fifthLevelScreen);
+                        *//*else if (currentLevel == LevelsScreen.LevelsCompleted.FIVE)
+                            game.setScreen(LevelsScreen.fifthLevelScreen);*//*
+                    }*/
                 }
                 return true;
             }
@@ -176,7 +185,7 @@ public class GameScreen extends ScreenAdapter {
             if (pause) pause = false;
             else pause = true;
         }
-        if (!pause) {
+        //if (!pause) {
 //        Determine if user press one of the following keys.
             ifKeyRecentlyPressed();
 //        Move tile every render.
@@ -214,7 +223,7 @@ public class GameScreen extends ScreenAdapter {
             for (Animal animal : animals) {
                 if (!animal.isMovePaused()) animal.moveAndDrawAnimal();
             }
-        }
+        //}
 
             if(pause){
                 spriteBatch.begin();
@@ -601,6 +610,7 @@ public class GameScreen extends ScreenAdapter {
         if (!win) {
             if(allAnimalsAreCaught() || fieldIsFilled()) {
                 win = true;
+                System.out.println(game);
                 game.levelsScreen.levelCompleted();
 
                 gameTime = (int) (System.currentTimeMillis() - startTimeInMilliseconds) / 1000;
