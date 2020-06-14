@@ -134,7 +134,6 @@ public class Animal {
      * Moves animal and draw it using spriteBatch.
      */
     public void moveAndDrawAnimal() {
-        System.out.println("Inside");
         if (!pause) {
             reflectFromTheBorderIfNeeded();
             if (crossesLine()) {

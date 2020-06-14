@@ -21,6 +21,7 @@ public class GameScreen extends ScreenAdapter {
     private static final double ROCKS_TEXTURE_PROBABILITY = 0.02;
     private static final int NUM_OF_RENDERS_OF_SLOWING_DOWN = 500;
     private static final int REDUCTION_OF_SPEED_WHILE_SLOWING_DOWN = 2;
+    private static final Random random = new Random();
     private final Foresty game;
     private final int secForOneStar;
     private final int secForTwoStars;
@@ -28,7 +29,7 @@ public class GameScreen extends ScreenAdapter {
     private final int percOfFillForWin;
     private final long startTimeInMilliseconds;
     public ArrayList<Animal> animals;
-    char[][] grid;
+    public char[][] grid;
     int rows, columns;
     int lastPressedKey;
     boolean clockwise;
@@ -41,9 +42,7 @@ public class GameScreen extends ScreenAdapter {
     LinkedHashSet<Point> tracePoints;
     HashSet<Point> borderPoints;
     HashMap<Point, Texture> contentPoints;
-    Random random;
     boolean turnedBefore;
-    Animal animal;
     private LevelsScreen.LevelsCompleted currentLevel;
     private HashMap<Animal.TYPES, Integer> typesIntegerHashMap;
     private Texture winScreenTheeStars, winScreenTwoStars, winScreenOneStars, gameOverScreen;
@@ -128,12 +127,11 @@ public class GameScreen extends ScreenAdapter {
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-                if(screenX>= 374 && screenX <= 450 && screenY>= 460 && screenY <= 535){
-                    //TODO: write that the level is completed, save the number os stars
+                if (screenX >= 374 && screenX <= 450 && screenY >= 460 && screenY <= 535) {
+                    //TODO: write that the level is completed, save the number of stars
                     game.levelsScreen.levelCompleted();
                     game.setScreen(game.levelsScreen);
-                }
-                else if(screenX>= 505 && screenX <= 580 && screenY>= 460 && screenY <= 535){
+                } else if (screenX >= 505 && screenX <= 580 && screenY >= 460 && screenY <= 535) {
                     // TODO: switch to next level, save data about completing level
                     game.levelsScreen.levelCompleted();
                 }
@@ -145,6 +143,7 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void render(float data) {
+
 
 //        Pause game if space pressed on first time and resume on second press.
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
@@ -187,12 +186,7 @@ public class GameScreen extends ScreenAdapter {
         spriteBatch.end();
 //        Draw animal.
         for (Animal animal : animals) {
-            if (!animal.isMovePaused()){
-                if(animal.getClass().equals(new Dog(grid, spriteBatch, borderPoints, tracePoints, this).getClass())) {
-                    ((Dog)animal).moveAndDrawAnimal();
-                }else
-                    animal.moveAndDrawAnimal();
-            }
+            if (!animal.isMovePaused()) animal.moveAndDrawAnimal();
         }
         checkForWin();
         if (win) {

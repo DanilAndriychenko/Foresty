@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
-import org.w3c.dom.css.Rect;
 
 import java.util.HashMap;
 
@@ -42,7 +41,7 @@ public class LevelsScreen extends ScreenAdapter {
 
     static {
         // Add animals to levels hashMaps.
-        lvlFirstAnimalsHashMap.put(Animal.TYPES.DOG, 3);
+        lvlFirstAnimalsHashMap.put(Animal.TYPES.SHEEP, 3);
 
         lvlSecondAnimalsHashMap.put(Animal.TYPES.SHEEP, 2);
         lvlSecondAnimalsHashMap.put(Animal.TYPES.DOG, 2);
