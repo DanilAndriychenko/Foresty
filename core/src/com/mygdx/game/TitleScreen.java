@@ -63,7 +63,9 @@ public class TitleScreen extends ScreenAdapter {
     @Override
     public void render(float delta) {
         // If user press space key, then go to the next scene.
-        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) game.setScreen(game.levelsScreen);
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+            game.setScreen(game.levelsScreen, game.musicOnTitleAndLevelsScreens);
+        }
 
         // For drawing current rabbit animation frame.
         stateTime += Gdx.graphics.getDeltaTime();

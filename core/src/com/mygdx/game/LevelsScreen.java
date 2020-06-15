@@ -92,22 +92,21 @@ public class LevelsScreen extends ScreenAdapter {
 
     private void handleUsersClick(int screenX, int screenY) {
         if (rectFirstFarm.contains(screenX + cameraX, screenY)) {
-            game.setScreen(new GameScreen(game, lvlFirstAnimalsHashMap, 45, 30, 15, 75, LevelsCompleted.ONE));
+            game.setScreen(new GameScreen(game, lvlFirstAnimalsHashMap, 45, 30, 15, 75, LevelsCompleted.ONE), game.musicOnGameScreen);
             cameraX = 0;
         } else if (rectSecondFarm.contains(screenX + cameraX, screenY) && level.getNum() >= 2) {
-            game.setScreen(new GameScreen(game, lvlSecondAnimalsHashMap, 45, 30, 15, 75, LevelsCompleted.TWO));
+            game.setScreen(new GameScreen(game, lvlSecondAnimalsHashMap, 45, 30, 15, 75, LevelsCompleted.TWO), game.musicOnGameScreen);
             cameraX = 0;
         } else if (rectThirdFarm.contains(screenX + cameraX, screenY) && level.getNum() >= 3) {
-            game.setScreen(new GameScreen(game, lvlThirdAnimalsHashMap, 45, 30, 15, 75, LevelsCompleted.THREE));
+            game.setScreen(new GameScreen(game, lvlThirdAnimalsHashMap, 45, 30, 15, 75, LevelsCompleted.THREE), game.musicOnGameScreen);
             cameraX = 0;
         } else if (rectFourthFarm.contains(screenX + cameraX, screenY) && level.getNum() >= 4) {
-            game.setScreen(new GameScreen(game, lvlFourthAnimalsHashMap, 45, 30, 15, 75, LevelsCompleted.FOUR));
+            game.setScreen(new GameScreen(game, lvlFourthAnimalsHashMap, 45, 30, 15, 75, LevelsCompleted.FOUR), game.musicOnGameScreen);
             cameraX = 0;
         } else if (rectFifthFarm.contains(screenX + cameraX, screenY) && level.getNum() >= 5) {
-            game.setScreen(new GameScreen(game, lvlFifthAnimalsHashMap, 45, 30, 15, 75, LevelsCompleted.FIVE));
+            game.setScreen(new GameScreen(game, lvlFifthAnimalsHashMap, 45, 30, 15, 75, LevelsCompleted.FIVE), game.musicOnGameScreen);
             cameraX = 0;
         }
-        System.out.println("screenX: " + screenX + ", screenY: " + screenY + "cameraX: " + cameraX + ", cameraX+screenX: " + cameraX + screenX);
     }
     public static LevelsCompleted getLevel() {
         return level;

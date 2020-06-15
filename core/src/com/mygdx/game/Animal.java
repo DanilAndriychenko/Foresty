@@ -1,6 +1,7 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -17,6 +18,8 @@ public class Animal {
             RECT_SIZE = 16;
     private static HashMap<String, Animation<TextureRegion>> rabbitAnimationsHashMap, horseAnimationsHashMap,
             sheepAnimationsHashMap, goatAnimationsHashMap, goatBabyAnimationsHashMap;
+    protected Music caughtMusic;
+
 
     static {
         rabbitAnimationsHashMap = fillAnimationHashMap("PC Computer - Stardew Valley - Dog Blonde.png",
@@ -63,6 +66,7 @@ public class Animal {
         this.spriteBatch = spriteBatch;
         this.borderPoints = borderPoints;
         this.tracePoints = tracePoints;
+        caughtMusic = Gdx.audio.newMusic(Gdx.files.internal("AnimalSounds\\sheep.mp3"));
         if(new Random().nextBoolean()){
             this.animalXVel *= -1;
         }
@@ -158,6 +162,8 @@ public class Animal {
                 else animalXVel=-1;
                 if (animalYVel>0) animalYVel=1;
                 else animalYVel=-1;
+                caughtMusic.setLooping(false);
+                caughtMusic.play();
             }
             elapsedTime += Gdx.graphics.getDeltaTime();
             spriteBatch.begin();

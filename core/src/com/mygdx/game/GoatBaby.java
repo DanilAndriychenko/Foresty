@@ -1,5 +1,6 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.awt.*;
@@ -18,6 +19,7 @@ public class GoatBaby extends Animal {
         this.gameScreen = gameScreen;
         uncaughtAnimals = new ArrayList<>();
         uncaught = true;
+        caughtMusic = Gdx.audio.newMusic(Gdx.files.internal("AnimalSounds\\goatBaby.mp3"));
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.awt.*;
@@ -10,6 +11,7 @@ public class Sheep extends Animal{
 
     public Sheep(char[][] grid, SpriteBatch spriteBatch, HashSet<Point> borderPoints, LinkedHashSet<Point> tracePoints){
         super(Animal.TYPES.SHEEP.getStringAnimationHashMap() ,Animal.TYPES.SHEEP.getAnimalXVel(), Animal.TYPES.SHEEP.getAnimalYVel(), grid, spriteBatch, borderPoints, tracePoints);
+        caughtMusic = Gdx.audio.newMusic(Gdx.files.internal("AnimalSounds\\sheep.mp3"));
     }
 
 }

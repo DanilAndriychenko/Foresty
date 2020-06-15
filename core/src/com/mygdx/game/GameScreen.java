@@ -57,7 +57,6 @@ public class GameScreen extends ScreenAdapter {
     private boolean pause;
     private boolean win, lose;
     private int invokeLaterKey, invokeLaterTimer;
-    private Music musicOnTitleAndLevelsScreens;
 
     public GameScreen(Foresty game, HashMap<Animal.TYPES, Integer> typesIntegerHashMap, int secForOneStar, int secForTwoStars, int secForThreeStars, int percOfFillForWin, LevelsScreen.LevelsCompleted currentLevel) {
         this.game = game;
@@ -144,11 +143,6 @@ public class GameScreen extends ScreenAdapter {
                     animals.add(new Sheep(grid, spriteBatch, borderPoints, tracePoints));
                 }
             }
-
-            game.musicOnTitleAndLevelsScreens.stop();
-            musicOnTitleAndLevelsScreens = Gdx.audio.newMusic(Gdx.files.internal("StardewValley-StardewValleyFairTheme_(tancpol.net).mp3"));
-            musicOnTitleAndLevelsScreens.setLooping(true);
-            musicOnTitleAndLevelsScreens.play();
         }
 
         Gdx.input.setInputProcessor(new InputAdapter() {
@@ -160,104 +154,77 @@ public class GameScreen extends ScreenAdapter {
                     Circle next = new Circle(582, Gdx.graphics.getHeight() - 462, 40);
                     if (home.contains(screenX, Gdx.graphics.getHeight() - screenY))
                     {
-                        musicOnTitleAndLevelsScreens.pause();
-                        game.musicOnTitleAndLevelsScreens.play();
-                        game.setScreen(game.levelsScreen);
+                        game.setScreen(game.levelsScreen, game.musicOnTitleAndLevelsScreens);
                     }
                     else if (restart.contains(screenX, Gdx.graphics.getHeight() - screenY)) {
                         if (currentLevel == LevelsScreen.LevelsCompleted.ONE)
                         {
-                            musicOnTitleAndLevelsScreens.pause();
-                            game.setScreen(new GameScreen(game, LevelsScreen.lvlFirstAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.ONE));
+                            game.setScreen(new GameScreen(game, LevelsScreen.lvlFirstAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.ONE), game.musicOnGameScreen);
                         }
                         else if (currentLevel == LevelsScreen.LevelsCompleted.TWO)
                         {
-                            musicOnTitleAndLevelsScreens.pause();
-                            game.setScreen(new GameScreen(game, LevelsScreen.lvlSecondAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.TWO));
+                            game.setScreen(new GameScreen(game, LevelsScreen.lvlSecondAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.TWO), game.musicOnGameScreen);
                         }
                         else if (currentLevel == LevelsScreen.LevelsCompleted.THREE)
                         {
-                            musicOnTitleAndLevelsScreens.pause();
-                            game.setScreen(new GameScreen(game, LevelsScreen.lvlThirdAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.THREE));
+                            game.setScreen(new GameScreen(game, LevelsScreen.lvlThirdAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.THREE), game.musicOnGameScreen);
                         }
                         else if (currentLevel == LevelsScreen.LevelsCompleted.FOUR)
                         {
-                            musicOnTitleAndLevelsScreens.pause();
-                            game.setScreen(new GameScreen(game, LevelsScreen.lvlFourthAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.FOUR));
+                            game.setScreen(new GameScreen(game, LevelsScreen.lvlFourthAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.FOUR), game.musicOnGameScreen);
                         }
                         else if (currentLevel == LevelsScreen.LevelsCompleted.FIVE)
                         {
-                            musicOnTitleAndLevelsScreens.pause();
-                            game.setScreen(new GameScreen(game, LevelsScreen.lvlFifthAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.FIVE));
+                            game.setScreen(new GameScreen(game, LevelsScreen.lvlFifthAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.FIVE), game.musicOnGameScreen);
                         }
                     } else if (next.contains(screenX, Gdx.graphics.getHeight() - screenY)) {
                         if (currentLevel == LevelsScreen.LevelsCompleted.ONE)
-                        {
-                            musicOnTitleAndLevelsScreens.pause();
-                            game.setScreen(new GameScreen(game, LevelsScreen.lvlSecondAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.TWO));
+
+                            game.setScreen(new GameScreen(game, LevelsScreen.lvlSecondAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.TWO), game.musicOnGameScreen);
                         }
                         else if (currentLevel == LevelsScreen.LevelsCompleted.TWO)
                         {
-                            musicOnTitleAndLevelsScreens.pause();
-                            game.setScreen(new GameScreen(game, LevelsScreen.lvlThirdAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.THREE));
-                        }
-                        else if (currentLevel == LevelsScreen.LevelsCompleted.THREE)
-                        {
-                            musicOnTitleAndLevelsScreens.pause();
-                            game.setScreen(new GameScreen(game, LevelsScreen.lvlFourthAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.FOUR));
-                        }
-                        else if (currentLevel == LevelsScreen.LevelsCompleted.FOUR)
-                        {
-                            musicOnTitleAndLevelsScreens.pause();
-                            game.setScreen(new GameScreen(game, LevelsScreen.lvlFifthAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.FIVE));
-                        }
+                            game.setScreen(new GameScreen(game, LevelsScreen.lvlThirdAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.THREE), game.musicOnGameScreen);
+                        } else if (currentLevel == LevelsScreen.LevelsCompleted.THREE) {
+                        game.setScreen(new GameScreen(game, LevelsScreen.lvlFourthAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.FOUR), game.musicOnGameScreen);
+                    } else if (currentLevel == LevelsScreen.LevelsCompleted.FOUR) {
+                        game.setScreen(new GameScreen(game, LevelsScreen.lvlFifthAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.FIVE), game.musicOnGameScreen);
                     }
-                } else if(win && currentLevel.getNum() == 5){
+                } else if (win && currentLevel.getNum() == 5) {
                     Circle home = new Circle(434, Gdx.graphics.getHeight() - 458, 40);
                     Circle restart = new Circle(528, Gdx.graphics.getHeight() - 462, 40);
                     if (home.contains(screenX, Gdx.graphics.getHeight() - screenY)) {
-
-                        musicOnTitleAndLevelsScreens.pause();
-                        game.musicOnTitleAndLevelsScreens.play();
-                        game.setScreen(game.levelsScreen);
-                    } else if(restart.contains(screenX, Gdx.graphics.getHeight() - screenY)){
-                        musicOnTitleAndLevelsScreens.pause();
-                        game.setScreen(new GameScreen(game, LevelsScreen.lvlFifthAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.FIVE));
+                        game.setScreen(game.levelsScreen, game.musicOnTitleAndLevelsScreens);
+                    } else if (restart.contains(screenX, Gdx.graphics.getHeight() - screenY)) {
+                        game.setScreen(new GameScreen(game, LevelsScreen.lvlFifthAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.FIVE), game.musicOnGameScreen);
                     }
-                }else if (lose) {
+                } else if (lose) {
                     Circle home = new Circle(424, Gdx.graphics.getHeight() - 466, 40);
                     Circle restart = new Circle(529, Gdx.graphics.getHeight() - 466, 40);
                     if (home.contains(screenX, Gdx.graphics.getHeight() - screenY))
                     {
-                        musicOnTitleAndLevelsScreens.pause();
-                        game.musicOnTitleAndLevelsScreens.play();
-                        game.setScreen(game.levelsScreen);
+                        game.setScreen(game.levelsScreen, game.musicOnTitleAndLevelsScreens);
                     }
                     else if (restart.contains(screenX, Gdx.graphics.getHeight() - screenY)) {
                         if (currentLevel == LevelsScreen.LevelsCompleted.ONE)
                         {
-                            musicOnTitleAndLevelsScreens.pause();
-                            game.setScreen(new GameScreen(game, LevelsScreen.lvlFirstAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.ONE));
+                            game.setScreen(new GameScreen(game, LevelsScreen.lvlFirstAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.ONE), game.musicOnGameScreen);
                         }
                         else if (currentLevel == LevelsScreen.LevelsCompleted.TWO)
                         {
-                            musicOnTitleAndLevelsScreens.pause();
-                            game.setScreen(new GameScreen(game, LevelsScreen.lvlSecondAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.TWO));
+                            game.setScreen(new GameScreen(game, LevelsScreen.lvlSecondAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.TWO), game.musicOnGameScreen);
                         }
                         else if (currentLevel == LevelsScreen.LevelsCompleted.THREE)
                         {
-                            musicOnTitleAndLevelsScreens.pause();
-                            game.setScreen(new GameScreen(game, LevelsScreen.lvlThirdAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.THREE));
+                            game.setScreen(new GameScreen(game, LevelsScreen.lvlThirdAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.THREE), game.musicOnGameScreen);
                         }
                         else if (currentLevel == LevelsScreen.LevelsCompleted.FOUR)
                         {
-                            musicOnTitleAndLevelsScreens.pause();
-                            game.setScreen(new GameScreen(game, LevelsScreen.lvlFourthAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.FOUR));
+                            game.setScreen(new GameScreen(game, LevelsScreen.lvlFourthAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.FOUR), game.musicOnGameScreen);
                         }
                         else if (currentLevel == LevelsScreen.LevelsCompleted.FIVE)
                         {
-                            musicOnTitleAndLevelsScreens.pause();
-                            game.setScreen(new GameScreen(game, LevelsScreen.lvlFifthAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.FIVE));
+                            game.setScreen(new GameScreen(game, LevelsScreen.lvlFifthAnimalsHashMap, 45, 30, 15, 75, LevelsScreen.LevelsCompleted.FIVE), game.musicOnGameScreen);
                         }
                     }
                 }
@@ -278,7 +245,8 @@ public class GameScreen extends ScreenAdapter {
                 pause = true;
                 for (Animal animal : animals) animal.pauseMove();
             }
-        }else if (Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE)) game.setScreen(game.levelsScreen);
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE))
+            game.setScreen(game.levelsScreen, game.musicOnTitleAndLevelsScreens);
 //        Determine if user press one of the following keys.
         ifKeyRecentlyPressed();
 //        Move tile every render.
@@ -349,8 +317,8 @@ public class GameScreen extends ScreenAdapter {
             }
             return;
         }
-
-        checkForLose();
+        if (!lose)
+            checkForLose();
         if (lose)
             showGameEndScreen(gameOverScreen);
     }
@@ -700,8 +668,11 @@ public class GameScreen extends ScreenAdapter {
         if (!win) {
             if (allAnimalsAreCaught() || fieldIsFilled()) {
                 win = true;
-                if(game.levelsScreen.getLevel() == currentLevel)
-                game.levelsScreen.levelCompleted();
+                Music winMusic = Gdx.audio.newMusic(Gdx.files.internal("EndGameSounds\\win.mp3"));
+                winMusic.setLooping(false);
+                winMusic.play();
+                if (game.levelsScreen.getLevel() == currentLevel)
+                    game.levelsScreen.levelCompleted();
 
                 gameTime = (int) (System.currentTimeMillis() - startTimeInMilliseconds) / 1000;
                 System.out.println(gameTime);
@@ -723,7 +694,11 @@ public class GameScreen extends ScreenAdapter {
     private void checkForLose() {
         for (Animal animal : animals) {
             if (animal.crossesLine()) {
+                Music winMusic = Gdx.audio.newMusic(Gdx.files.internal("EndGameSounds\\lose.mp3"));
+                winMusic.setLooping(false);
+                winMusic.play();
                 lose = true;
+                break;
             }
         }
     }
