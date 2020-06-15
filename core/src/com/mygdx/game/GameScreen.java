@@ -51,11 +51,13 @@ public class GameScreen extends ScreenAdapter {
     private HashMap<Animal.TYPES, Integer> typesIntegerHashMap;
     private Texture winScreenTheeStars, winScreenTwoStars, winScreenOneStars, gameOverScreen, winScreenZeroStars;
     private Texture lastLevelThreeStars, lastLevelTwoStars, lastLevelOneStars, lastLevelZeroStars;
+    private Texture levelDescriptionTexture;
     private int currX, currY;
     private Point currPoint, prevPoint;
     private int shiftAfterTurn;
     private boolean pause;
     private boolean win, lose;
+    private boolean levelDescriptionIsShown;
     private int invokeLaterKey, invokeLaterTimer;
 
     public GameScreen(Foresty game, HashMap<Animal.TYPES, Integer> typesIntegerHashMap, int secForOneStar, int secForTwoStars, int secForThreeStars, int percOfFillForWin, LevelsScreen.LevelsCompleted currentLevel) {
@@ -67,6 +69,20 @@ public class GameScreen extends ScreenAdapter {
         this.percOfFillForWin = percOfFillForWin;
         this.currentLevel = currentLevel;
         startTimeInMilliseconds = System.currentTimeMillis();
+        levelDescriptionIsShown = true;
+    }
+
+    private void initializeLevelDescriptionTexture(){
+        if(currentLevel == LevelsScreen.LevelsCompleted.ONE)
+            levelDescriptionTexture = new Texture(Gdx.files.internal("Story\\legend.png"));
+        else if(currentLevel == LevelsScreen.LevelsCompleted.TWO)
+            levelDescriptionTexture = new Texture(Gdx.files.internal("Story\\horseDescription.png"));
+        else if(currentLevel == LevelsScreen.LevelsCompleted.THREE)
+            levelDescriptionTexture = new Texture(Gdx.files.internal("Story\\dogDescription.png"));
+        else if(currentLevel == LevelsScreen.LevelsCompleted.FOUR)
+            levelDescriptionTexture = new Texture(Gdx.files.internal("Story\\goatDescription.png"));
+        else if(currentLevel == LevelsScreen.LevelsCompleted.FIVE)
+            levelDescriptionTexture = new Texture(Gdx.files.internal("Story\\babeGoatDescription.png"));
     }
 
     @Override
@@ -91,6 +107,7 @@ public class GameScreen extends ScreenAdapter {
         lastLevelZeroStars = new Texture(Gdx.files.internal("finishLevel\\completedLastZero.png"));
         gameOverScreen = new Texture(Gdx.files.internal("finishLevel\\failed.png"));
         pauseTexture = new Texture(Gdx.files.internal("pause.png"));
+        initializeLevelDescriptionTexture();
         shapeRenderer = new ShapeRenderer();
         tracePoints = new LinkedHashSet<>();
         borderPoints = new HashSet<>();
@@ -236,91 +253,104 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void render(float data) {
+
 //        Pause game if space pressed on first time and resume on second press.
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            if (pause) {
-                pause = false;
-                for (Animal animal : animals) animal.resumeMove();
-            } else {
-                pause = true;
-                for (Animal animal : animals) animal.pauseMove();
-            }
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE))
-            game.setScreen(game.levelsScreen, game.musicOnTitleAndLevelsScreens);
+            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && levelDescriptionIsShown == false) {
+                if (pause) {
+                    pause = false;
+                    for (Animal animal : animals) animal.resumeMove();
+                } else {
+                    pause = true;
+                    for (Animal animal : animals) animal.pauseMove();
+                }
+            } else if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
+                game.setScreen(game.levelsScreen, game.musicOnTitleAndLevelsScreens);
 //        Determine if user press one of the following keys.
-        ifKeyRecentlyPressed();
+            ifKeyRecentlyPressed();
 //        Move tile every render.
-        moveHead();
+            moveHead();
 //        Create point of current position of head tile.
-        Point newPoint = new Point(currX / RECT_SIZE * RECT_SIZE, currY / RECT_SIZE * RECT_SIZE);
-        addNewPoint(newPoint);
-        spriteBatch.begin();
-//        Draw background.
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
-                spriteBatch.draw(backgroundTexture, j * RECT_SIZE, i * RECT_SIZE, RECT_SIZE, RECT_SIZE);
-            }
-        }
-//        Then draw content inside borders.
-        for (Map.Entry<Point, Texture> entry : contentPoints.entrySet()) {
-            spriteBatch.draw(entry.getValue(), entry.getKey().x, entry.getKey().y, RECT_SIZE, RECT_SIZE);
-        }
-//        Then draw borders of the map.
-        for (Point point : borderPoints) {
-            spriteBatch.draw(borderTexture, point.x, point.y, RECT_SIZE, RECT_SIZE);
-        }
-//        Draw trace after head.
-        Iterator<Point> pointIterator = tracePoints.iterator();
-        Point currPoint = null;
-        if (pointIterator.hasNext()) currPoint = pointIterator.next();
-        do {
-            if (currPoint != null) spriteBatch.draw(traceTexture, currPoint.x, currPoint.y, RECT_SIZE, RECT_SIZE);
-            if (pointIterator.hasNext()) currPoint = pointIterator.next();
-        } while (pointIterator.hasNext());
-//        And the last one, draw head tile.
-        spriteBatch.draw(headTexture, this.currPoint.x, this.currPoint.y, RECT_SIZE, RECT_SIZE);
-        spriteBatch.end();
-//        Draw animal.
-        for (Animal animal : animals) {
-            animal.moveAndDrawAnimal();
-        }
-
-        if (pause && !win && !lose) {
+            Point newPoint = new Point(currX / RECT_SIZE * RECT_SIZE, currY / RECT_SIZE * RECT_SIZE);
+            addNewPoint(newPoint);
             spriteBatch.begin();
-            spriteBatch.draw(pauseTexture, Gdx.graphics.getWidth() / 2 - pauseTexture.getWidth() / 2, Gdx.graphics.getHeight() / 2 - pauseTexture.getHeight() / 2);
+//        Draw background.
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < columns; j++) {
+                    spriteBatch.draw(backgroundTexture, j * RECT_SIZE, i * RECT_SIZE, RECT_SIZE, RECT_SIZE);
+                }
+            }
+//        Then draw content inside borders.
+            for (Map.Entry<Point, Texture> entry : contentPoints.entrySet()) {
+                spriteBatch.draw(entry.getValue(), entry.getKey().x, entry.getKey().y, RECT_SIZE, RECT_SIZE);
+            }
+//        Then draw borders of the map.
+            for (Point point : borderPoints) {
+                spriteBatch.draw(borderTexture, point.x, point.y, RECT_SIZE, RECT_SIZE);
+            }
+//        Draw trace after head.
+            Iterator<Point> pointIterator = tracePoints.iterator();
+            Point currPoint = null;
+            if (pointIterator.hasNext()) currPoint = pointIterator.next();
+            do {
+                if (currPoint != null) spriteBatch.draw(traceTexture, currPoint.x, currPoint.y, RECT_SIZE, RECT_SIZE);
+                if (pointIterator.hasNext()) currPoint = pointIterator.next();
+            } while (pointIterator.hasNext());
+//        And the last one, draw head tile.
+            spriteBatch.draw(headTexture, this.currPoint.x, this.currPoint.y, RECT_SIZE, RECT_SIZE);
             spriteBatch.end();
-            return;
+//        Draw animal.
+            for (Animal animal : animals) {
+                animal.moveAndDrawAnimal();
+            }
+
+            if (pause && !win && !lose) {
+                spriteBatch.begin();
+                spriteBatch.draw(pauseTexture, Gdx.graphics.getWidth() / 2 - pauseTexture.getWidth() / 2, Gdx.graphics.getHeight() / 2 - pauseTexture.getHeight() / 2);
+                spriteBatch.end();
+                return;
+            }
+            if(levelDescriptionIsShown){
+            spriteBatch.begin();
+            spriteBatch.draw(levelDescriptionTexture, Gdx.graphics.getWidth()/2 - levelDescriptionTexture.getWidth()/2, Gdx.graphics.getHeight()/2 - levelDescriptionTexture.getHeight()/2);
+            spriteBatch.end();
+            for (Animal animal : animals) animal.pauseMove();
+
+            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+                levelDescriptionIsShown = false;
+                for (Animal animal : animals) animal.resumeMove();
+            }
         }
 
-        checkForWin();
-        if (win) {
-            if (gameTime <= secForThreeStars) {
-                if (currentLevel.getNum() != 5)
-                    showGameEndScreen(winScreenTheeStars);
-                else
-                    showGameEndScreen(lastLevelThreeStars);
-            } else if (gameTime <= secForTwoStars) {
-                if (currentLevel.getNum() != 5)
-                    showGameEndScreen(winScreenTwoStars);
-                else
-                    showGameEndScreen(lastLevelTwoStars);
-            } else if (gameTime <= secForOneStar) {
-                if (currentLevel.getNum() != 5)
-                    showGameEndScreen(winScreenOneStars);
-                else
-                    showGameEndScreen(lastLevelOneStars);
-            } else {
-                if (currentLevel.getNum() != 5)
-                    showGameEndScreen(winScreenZeroStars);
-                else
-                    showGameEndScreen(lastLevelZeroStars);
+            checkForWin();
+            if (win) {
+                if (gameTime <= secForThreeStars) {
+                    if (currentLevel.getNum() != 5)
+                        showGameEndScreen(winScreenTheeStars);
+                    else
+                        showGameEndScreen(lastLevelThreeStars);
+                } else if (gameTime <= secForTwoStars) {
+                    if (currentLevel.getNum() != 5)
+                        showGameEndScreen(winScreenTwoStars);
+                    else
+                        showGameEndScreen(lastLevelTwoStars);
+                } else if (gameTime <= secForOneStar) {
+                    if (currentLevel.getNum() != 5)
+                        showGameEndScreen(winScreenOneStars);
+                    else
+                        showGameEndScreen(lastLevelOneStars);
+                } else {
+                    if (currentLevel.getNum() != 5)
+                        showGameEndScreen(winScreenZeroStars);
+                    else
+                        showGameEndScreen(lastLevelZeroStars);
+                }
+                return;
             }
-            return;
-        }
-        if (!lose)
-            checkForLose();
-        if (lose)
-            showGameEndScreen(gameOverScreen);
+            if (!lose)
+                checkForLose();
+            if (lose)
+                showGameEndScreen(gameOverScreen);
+        //}
     }
 
     /**

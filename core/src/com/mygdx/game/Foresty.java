@@ -20,6 +20,7 @@ public class Foresty extends Game {
         musicOnTitleAndLevelsScreens = Gdx.audio.newMusic(Gdx.files.internal("TitleScreenMusic.mp3"));
         musicOnGameScreen = Gdx.audio.newMusic(Gdx.files.internal("StardewValley-StardewValleyFairTheme_(tancpol.net).mp3"));
         musicOnTitleAndLevelsScreens.setLooping(true);
+        musicOnGameScreen.setLooping(true);
         levelsScreen = new LevelsScreen(this);
         levelsScreen.setSavedInfo();
 
